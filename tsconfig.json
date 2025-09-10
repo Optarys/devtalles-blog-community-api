@@ -30,6 +30,9 @@
       ],
       "@auth/presentation/*": [
         "src/auth/presentation/*"
+      ],
+      "@core/*": [
+        "src/core/*"
       ]
     },
   }

@@ -1,6 +1,7 @@
 import { IOAuthStrategy } from "@auth/application/contracts";
-import { Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 
+@Injectable()
 export class GoogleStrategy implements IOAuthStrategy {
     readonly logger: Logger = new Logger(GoogleStrategy.name);
     readonly provider: string = 'google';

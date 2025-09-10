@@ -1,0 +1,1 @@
+export const OAUTH_STRATEGIES = 'OAUTH_STRATEGIES';
