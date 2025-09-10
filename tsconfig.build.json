@@ -13,5 +13,11 @@
     "@auth/application/*": [
       "src/auth/application/*"
     ],
+    "@auth/infrastructure/*": [
+      "src/auth/infrastructure/*"
+    ],
+    "@auth/presentation/*": [
+      "src/auth/presentation/*"
+    ]
   },
 }

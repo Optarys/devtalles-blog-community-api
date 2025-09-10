@@ -28,6 +28,9 @@
       "@auth/infrastructure/*": [
         "src/auth/infrastructure/*"
       ],
+      "@auth/presentation/*": [
+        "src/auth/presentation/*"
+      ]
     },
   }
 }
