@@ -9,8 +9,7 @@ export class CoreDependencies {
 
     static modulesCollection(): (DynamicModule | Type<any> | Promise<DynamicModule> | ForwardReference<any>)[] {
         return [
-            CqrsModule.forRoot(),
-            ORMConfiguration.register()
+           
         ]
     }
 

@@ -1,19 +1,21 @@
 import { CoreDependencies } from '@core/dependecies';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { authProviders } from './auth/providers';
+import { AuthModule } from './auth/auth.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ...CoreDependencies.modulesCollection()
+    CoreModule,
+    AuthModule,
+
   ],
   controllers: [],
   providers: [
-    ...CoreDependencies.providersCollection(),
-    ...authProviders()
+
   ],
 })
 export class AppModule { }
