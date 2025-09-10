@@ -20,6 +20,14 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@auth/application/*": [
+        "src/auth/application/*"
+      ],
+      "@auth/infrastructure/*": [
+        "src/auth/infrastructure/*"
+      ],
+    },
   }
 }

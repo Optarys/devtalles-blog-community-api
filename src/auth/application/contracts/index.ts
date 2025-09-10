@@ -1,0 +1,1 @@
+export { type IOAuthStrategy } from './oauth.strategy';
