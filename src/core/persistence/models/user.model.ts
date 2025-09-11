@@ -30,7 +30,7 @@ export class User {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => UserStatus, (status) => status.users, { nullable: false })
+  @ManyToOne(() => UserStatus, (status) => status.users, { nullable: false})
   @JoinColumn({ name: 'status_id' })
   status: UserStatus;
 

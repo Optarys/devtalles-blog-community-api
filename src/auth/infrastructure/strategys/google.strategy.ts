@@ -1,4 +1,4 @@
-import { IOAuthStrategy } from "@auth/application/contracts";
+import { IOAuthStrategy } from "@auth/application/abstractions/contracts";
 import { Injectable, Logger } from "@nestjs/common";
 
 @Injectable()

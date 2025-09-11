@@ -13,4 +13,16 @@ export class AuthContext {
     get users() {
         return this.context.users;
     }
+
+    get providers() {
+        return this.context.authProviders;
+    }
+
+    get userIdentities() {
+        return this.context.userIdentities;
+    }
+
+    get userCredentials() {
+        return this.context.userCredentials;
+    }
 }

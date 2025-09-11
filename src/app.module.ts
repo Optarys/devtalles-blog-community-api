@@ -1,8 +1,7 @@
-import { CoreDependencies } from '@core/dependecies';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
+import { AuthModule } from './auth';
 
 @Module({
   imports: [
