@@ -2,6 +2,9 @@
   <a href="http://nestjs.com/" target="blank">
     <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
   </a>
+  <a href="http://postgresql.org/" target="blank">
+    <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="105" alt="Postgres Logo" />
+  </a>
 </p>
 
 <h2 align="center">API con NestJS + PostgreSQL</h2>
