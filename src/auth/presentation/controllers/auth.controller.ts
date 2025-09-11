@@ -1,15 +1,33 @@
-import { OAuth2Command } from '@auth/application/features/oauth2';
+import { OAuth2Command, RedirectOauth2Query } from '@auth/application/features/oauth2';
 import { MediatorService } from '@core/common/services';
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, Res } from '@nestjs/common';
+import { type Response } from 'express';
+
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly mediator: MediatorService) { }
+    constructor(
+        private readonly mediator: MediatorService,
+    ) { }
+
+    @Get('redirect/oauth2')
+    async redirectOauth2(@Query('provider') provider: string, @Res() res: Response) {
+        const result = await this.mediator.execute(new RedirectOauth2Query(provider));
+
+        if (result.isSuccess) {
+            console.log('Redirigiendo a:', result.getValue());
+            // Esto envía un 302 al navegador con la URL de Discord
+            res.redirect(result.getValue());
+        } else {
+            res.status(HttpStatus.BAD_REQUEST).json(result);
+        }
+    }
+
 
     @Get('oauth2/callback')
     @HttpCode(HttpStatus.OK)
-    async discordLogin(@Query('code') code: string) {
-        const result = await this.mediator.execute(new OAuth2Command('discord', code ));
+    async oauth2Login(@Query('code') code: string, @Query('state') state: string) {
+        const result = await this.mediator.execute(new OAuth2Command(state, code));
         return result.match(
             (value) => value,
             (error, details) => details,

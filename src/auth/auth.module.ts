@@ -7,7 +7,7 @@ import { AuthController } from './presentation/controllers/auth.controller';
 import { CoreModule } from '@core/core.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { OAuth2CommandHandler } from './application/features/oauth2';
+import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/features/oauth2';
 import { AuthContext } from './infrastructure/context';
 
 @Module({
@@ -39,6 +39,7 @@ import { AuthContext } from './infrastructure/context';
         },
         OAuthStrategyService,
         OAuth2CommandHandler,
+        RedirectOauth2QueryHandler
     ],
 })
 export class AuthModule { }

@@ -1,59 +1,94 @@
 import { Result } from '@core/common/responses';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { CommandBus, ICommand, Command } from '@nestjs/cqrs';
+import { ICommand, Command, IQuery, Query, CommandBus, QueryBus } from '@nestjs/cqrs';
 import { validateOrReject, ValidationError } from 'class-validator';
 import { getMetadataStorage } from 'class-validator';
-
-
-
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class MediatorService {
     private readonly logger = new Logger(MediatorService.name);
 
-    constructor(private readonly commandBus: CommandBus) { }
+    constructor(private readonly moduleRef: ModuleRef) { }
 
-    async execute<TCommand extends ICommand, TResult = TCommand extends Command<infer TR> ? TR : any>(command: TCommand): Promise<Result<TResult>> {
+    async execute<
+        TMessage extends ICommand | IQuery,
+        TResult = TMessage extends Command<infer CR>
+        ? CR
+        : TMessage extends Query<infer QR>
+        ? QR
+        : any
+    >(message: TMessage): Promise<Result<TResult>> {
         try {
-            this.logger.log(`Checking validators for: ${command.constructor.name}`);
+            this.logger.log(`Checking validators for: ${message.constructor.name}`);
 
-            // ✅ solo validar si hay decoradores
-            if (this.hasValidationMetadata(command)) {
-                this.logger.log(`Validating command: ${command.constructor.name}`);
-                await validateOrReject(command as object);
-                this.logger.log(`Command ${command.constructor.name} passed validation`);
+            if (this.hasValidationMetadata(message)) {
+                this.logger.log(`Validating: ${message.constructor.name}`);
+                await validateOrReject(message as object);
+                this.logger.log(`${message.constructor.name} passed validation`);
             } else {
-                this.logger.log(`Command ${command.constructor.name} has no validators, skipping validation`);
+                this.logger.log(`${message.constructor.name} has no validators, skipping validation`);
             }
 
-            return await this.commandBus.execute(command);
+            // ✅ Resuelve dinámicamente el bus correspondiente
+            const bus = this.isCommand(message)
+                ? this.moduleRef.get(CommandBus, { strict: false })
+                : this.moduleRef.get(QueryBus, { strict: false });
+
+            console.log(bus);
+
+            return await this.executeBus(bus, message);
         } catch (error) {
-            this.logger.error(`Command ${command.constructor.name} failed: ${error}`);
-
-            console.info(`es de tipo: `, error instanceof HttpException); // true o false
-            if (Array.isArray(error) && error[0] instanceof ValidationError) {
-                const messages = this.flattenErrors(error);
-                return Result.failure('Validation failed', messages);
-            }
-
-            // Detectar HttpException de NestJS
-            if (error instanceof HttpException) {
-                const response = error.getResponse();
-                const message = typeof response === 'string' ? response : (response as any).message;
-                return Result.failure(message || error.message, response);
-            }
-
-            // Detecta si es una excepción HTTP de NestJS
-            if (error.response) {
-                return Result.failure(error.response.message || error.message, error.response);
-            }
-
-            return Result.failure(error.response || 'Unknown error');
+            this.logger.error(`${message.constructor.name} failed: ${error}`);
+            return this.handleError(error);
         }
     }
 
-    private flattenErrors(errors: ValidationError[], parentPath = ''): { property: string, message: string }[] {
-        const result: { property: string, message: string }[] = [];
+    private async executeBus<TMessage extends ICommand | IQuery, TResult>(
+        bus: CommandBus | QueryBus,
+        message: TMessage,
+    ): Promise<TResult> {
+        
+        if (this.isCommand(message)) {
+            this.logger.log('Ejecutando Bus de comandos')
+            return (bus as CommandBus).execute(message as ICommand);
+        } else {
+             this.logger.log('Ejecutando Bus de consultas')
+            return (bus as QueryBus).execute(message as IQuery);
+        }
+    }
+
+
+    // ---------------- HELPERS ----------------
+    private isCommand(obj: any): obj is ICommand {
+        return obj.constructor.name.endsWith('Command');
+    }
+
+    private handleError(error: any): Result<any> {
+        if (Array.isArray(error) && error[0] instanceof ValidationError) {
+            const messages = this.flattenErrors(error);
+            return Result.failure('Validation failed', messages);
+        }
+
+        if (error instanceof HttpException) {
+            const response = error.getResponse();
+            const message =
+                typeof response === 'string' ? response : (response as any).message;
+            return Result.failure(message || error.message, response);
+        }
+
+        if (error.response) {
+            return Result.failure(error.response.message || error.message, error.response);
+        }
+
+        return Result.failure(error.message || 'Unknown error');
+    }
+
+    private flattenErrors(
+        errors: ValidationError[],
+        parentPath = '',
+    ): { property: string; message: string }[] {
+        const result: { property: string; message: string }[] = [];
 
         for (const err of errors) {
             const path = parentPath ? `${parentPath}.${err.property}` : err.property;
@@ -67,7 +102,7 @@ export class MediatorService {
                 }
             }
 
-            if (err.children && err.children.length > 0) {
+            if (err.children?.length) {
                 result.push(...this.flattenErrors(err.children, path));
             }
         }

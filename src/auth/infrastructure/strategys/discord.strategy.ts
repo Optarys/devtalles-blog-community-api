@@ -11,6 +11,8 @@ export class DiscordStrategy implements IOAuthStrategy {
     constructor(private readonly config: ConfigService) { }
 
     getAuthorizationUrl(state: string): string {
+        this.logger.log('Creando URL de redireccionamiento')
+
         const clientId = this.config.get<string>('DISCORD_CLIENT_ID');
         const redirectUri = encodeURIComponent(this.config.get<string>('DISCORD_REDIRECT_URI')!);
         const scope = encodeURIComponent('identify email');
