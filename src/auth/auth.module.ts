@@ -7,6 +7,8 @@ import { AuthController } from './presentation/controllers/auth.controller';
 import { CoreModule } from '@core/core.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { OAuth2CommandHandler } from './application/features/oauth2';
+import { AuthContext } from './infrastructure/context';
 
 @Module({
     imports: [
@@ -26,14 +28,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ],
     controllers: [AuthController],
     providers: [
+        AuthContext,
         GoogleStrategy,
         DiscordStrategy,
+        
         {
             provide: OAUTH_STRATEGIES,
             useFactory: (...strategies: IOAuthStrategy[]) => strategies,
             inject: [GoogleStrategy, DiscordStrategy],
         },
         OAuthStrategyService,
-    ]
+        OAuth2CommandHandler,
+    ],
 })
 export class AuthModule { }

@@ -1,23 +1,14 @@
 import { IOAuthStrategy } from "@auth/application/abstractions/contracts";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-discord';
 
 @Injectable()
-export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') implements IOAuthStrategy {
+export class DiscordStrategy implements IOAuthStrategy {
     readonly logger: Logger = new Logger(DiscordStrategy.name);
 
     readonly provider: string = 'discord';
 
-    constructor(private readonly config: ConfigService) {
-        super({
-            clientID: config.get('DISCORD_CLIENT_ID'),
-            clientSecret: config.get('DISCORD_CLIENT_SECRET'),
-            callbackURL: config.get('DISCORD_REDIRECT_URI'),
-            scope: ['identify', 'email'], // o los que necesites
-        })
-    }
+    constructor(private readonly config: ConfigService) { }
 
     getAuthorizationUrl(state: string): string {
         const clientId = this.config.get<string>('DISCORD_CLIENT_ID');
@@ -32,22 +23,34 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') imple
         const clientSecret = this.config.get<string>('DISCORD_CLIENT_SECRET')!;
         const redirectUri = this.config.get<string>('DISCORD_REDIRECT_URI')!;
 
+        this.logger.log({
+            clientId,
+            redirectUri,
+            code,
+        });
+
+
         const params = new URLSearchParams();
-        params.append('client_id', clientId);
-        params.append('client_secret', clientSecret);
         params.append('grant_type', 'authorization_code');
         params.append('code', code);
         params.append('redirect_uri', redirectUri);
 
+        const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
         const res = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Basic ${basicAuth}`,
+             },
             body: params.toString(),
         });
 
+        console.log(params.toString())
+
         if (!res.ok) {
             const errorText = await res.text();
-            this.logger.error(`Error intercambiando code: ${errorText}`);
+            this.logger.error(`Error intercambiando code: ${JSON.stringify(errorText)}`);
             throw new Error(`Discord token exchange failed: ${res.status}`);
         }
 

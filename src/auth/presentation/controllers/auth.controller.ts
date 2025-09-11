@@ -1,6 +1,6 @@
 import { OAuth2Command } from '@auth/application/features/oauth2';
 import { MediatorService } from '@core/common/services';
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -8,9 +8,8 @@ export class AuthController {
 
     @Get('oauth2/callback')
     @HttpCode(HttpStatus.OK)
-    async discordLogin(@Req() req) {
-        console.log(req)
-        const result = await this.mediator.execute(new OAuth2Command(req.code, req.state));
+    async discordLogin(@Query('code') code: string) {
+        const result = await this.mediator.execute(new OAuth2Command('discord', code ));
         return result.match(
             (value) => value,
             (error, details) => details,

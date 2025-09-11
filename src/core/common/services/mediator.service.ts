@@ -2,6 +2,10 @@ import { Result } from '@core/common/responses';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { CommandBus, ICommand, Command } from '@nestjs/cqrs';
 import { validateOrReject, ValidationError } from 'class-validator';
+import { getMetadataStorage } from 'class-validator';
+
+
+
 
 @Injectable()
 export class MediatorService {
@@ -11,9 +15,16 @@ export class MediatorService {
 
     async execute<TCommand extends ICommand, TResult = TCommand extends Command<infer TR> ? TR : any>(command: TCommand): Promise<Result<TResult>> {
         try {
-            this.logger.log(`Validating command: ${command.constructor.name}`);
-            await validateOrReject(command as object);
-            this.logger.log(`Command ${command.constructor.name} passed validation`);
+            this.logger.log(`Checking validators for: ${command.constructor.name}`);
+
+            // ✅ solo validar si hay decoradores
+            if (this.hasValidationMetadata(command)) {
+                this.logger.log(`Validating command: ${command.constructor.name}`);
+                await validateOrReject(command as object);
+                this.logger.log(`Command ${command.constructor.name} passed validation`);
+            } else {
+                this.logger.log(`Command ${command.constructor.name} has no validators, skipping validation`);
+            }
 
             return await this.commandBus.execute(command);
         } catch (error) {
@@ -62,5 +73,16 @@ export class MediatorService {
         }
 
         return result;
+    }
+
+    private hasValidationMetadata(obj: object): boolean {
+        const target = obj.constructor;
+        const metadata = getMetadataStorage().getTargetValidationMetadatas(
+            target,
+            target.name,
+            false,
+            false,
+        );
+        return metadata.length > 0;
     }
 }
