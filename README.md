@@ -53,7 +53,7 @@ $ yarn start:prod
 $ yarn test
 ```
 ---
-## Diagramas de arquitectura
+## 🏗️ Diagramas de arquitectura
 ### Flujo OAuth2 con Discord/Google
   ```mermaid
   sequenceDiagram
