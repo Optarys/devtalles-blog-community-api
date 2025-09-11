@@ -11,16 +11,15 @@ export class AuthController {
     ) { }
 
     @Get('redirect/oauth2')
-    async redirectOauth2(@Query('provider') provider: string, @Res() res: Response) {
+    async redirectOauth2(
+        @Query('provider') provider: string,
+        @Res({ passthrough: true }) res: Response) {
         const result = await this.mediator.execute(new RedirectOauth2Query(provider));
 
-        if (result.isSuccess) {
-            console.log('Redirigiendo a:', result.getValue());
-            // Esto envía un 302 al navegador con la URL de Discord
-            res.redirect(result.getValue());
-        } else {
-            res.status(HttpStatus.BAD_REQUEST).json(result);
-        }
+        return result.match(
+            (value) => res.redirect(value),
+            (error, details) => details,
+        )
     }
 
 
