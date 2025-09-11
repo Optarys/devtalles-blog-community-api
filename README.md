@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h2 align="center">Proyecto Base con NestJS + OAuth2</h2>
+<h2 align="center">API con NestJS + PostgreSQL</h2>
 
 ---
 
@@ -54,45 +54,45 @@ $ yarn test
 ```
 ---
 ## Diagramas de arquitectura
-
-```mermaid
-sequenceDiagram
-    participant FE as Frontend
-    participant Discord as Discord OAuth2
-    participant AuthCtrl as AuthController
-    participant Mediator as MediatorService
-    participant CmdHandler as OAuth2CommandHandler
-    participant Strategy as DiscordStrategy
-    participant DB as Database
-    participant JWT as JwtService
-
-    FE->>Discord: GET /oauth2/authorize (client_id, redirect_uri, scope, state)
-    Discord-->>FE: Redirect con code + state
-    FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX&state=YYY
-
-    AuthCtrl->>Mediator: execute(new OAuth2Command(code, state))
-
-    Mediator->>CmdHandler: dispatch OAuth2Command
-
-    CmdHandler->>Strategy: exchangeCodeForToken(code)
-    Strategy->>Discord: POST /oauth2/token
-    Discord-->>Strategy: { access_token, refresh_token }
-    
-    CmdHandler->>Strategy: getUserProfile(access_token)
-    Strategy->>Discord: GET /api/users/@me (Authorization: Bearer token)
-    Discord-->>Strategy: { id, email, username }
-
-    CmdHandler->>DB: Buscar user_identity (provider=discord, provider_user_id=id)
-    alt Usuario NO existe
-        CmdHandler->>DB: INSERT User + INSERT UserIdentity
-    else Usuario YA existe
-        CmdHandler->>DB: UPDATE UserIdentity tokens
-    end
-
-    CmdHandler->>JWT: Generar JWT con { sub, email, provider }
-    JWT-->>CmdHandler: token
-
-    CmdHandler-->>Mediator: { user, token }
-    Mediator-->>AuthCtrl: { user, token }
-    AuthCtrl-->>FE: { user, token }
-```
+### Flujo OAuth2 con Discord/Google
+  ```mermaid
+  sequenceDiagram
+      participant FE as Frontend
+      participant Discord as Discord OAuth2
+      participant AuthCtrl as AuthController
+      participant Mediator as MediatorService
+      participant CmdHandler as OAuth2CommandHandler
+      participant Strategy as DiscordStrategy
+      participant DB as Database
+      participant JWT as JwtService
+  
+      FE->>Discord: GET /oauth2/authorize (client_id, redirect_uri, scope, state)
+      Discord-->>FE: Redirect con code + state
+      FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX&state=YYY
+  
+      AuthCtrl->>Mediator: execute(new OAuth2Command(code, state))
+  
+      Mediator->>CmdHandler: dispatch OAuth2Command
+  
+      CmdHandler->>Strategy: exchangeCodeForToken(code)
+      Strategy->>Discord: POST /oauth2/token
+      Discord-->>Strategy: { access_token, refresh_token }
+      
+      CmdHandler->>Strategy: getUserProfile(access_token)
+      Strategy->>Discord: GET /api/users/@me (Authorization: Bearer token)
+      Discord-->>Strategy: { id, email, username }
+  
+      CmdHandler->>DB: Buscar user_identity (provider=discord, provider_user_id=id)
+      alt Usuario NO existe
+          CmdHandler->>DB: INSERT User + INSERT UserIdentity
+      else Usuario YA existe
+          CmdHandler->>DB: UPDATE UserIdentity tokens
+      end
+  
+      CmdHandler->>JWT: Generar JWT con { sub, email, provider }
+      JWT-->>CmdHandler: token
+  
+      CmdHandler-->>Mediator: { user, token }
+      Mediator-->>AuthCtrl: { user, token }
+      AuthCtrl-->>FE: { user, token }
+  ```
