@@ -51,31 +51,48 @@ $ yarn start:prod
 
 # Pruebas unitarias
 $ yarn test
+```
+---
+## Diagramas de arquitectura
 
+```mermaid
 sequenceDiagram
     participant FE as Frontend
-    participant Provider as OAuth Provider (Discord/Google)
+    participant Discord as Discord OAuth2
     participant AuthCtrl as AuthController
     participant Mediator as MediatorService
     participant CmdHandler as OAuth2CommandHandler
+    participant Strategy as DiscordStrategy
     participant DB as Database
     participant JWT as JwtService
 
-    FE->>Provider: GET /oauth2/authorize
-    Provider-->>FE: Redirect con code + state
-    FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX
+    FE->>Discord: GET /oauth2/authorize (client_id, redirect_uri, scope, state)
+    Discord-->>FE: Redirect con code + state
+    FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX&state=YYY
 
-    AuthCtrl->>Mediator: execute(OAuth2Command)
+    AuthCtrl->>Mediator: execute(new OAuth2Command(code, state))
+
     Mediator->>CmdHandler: dispatch OAuth2Command
 
-    CmdHandler->>Provider: Intercambiar code por token
-    Provider-->>CmdHandler: access_token + refresh_token
+    CmdHandler->>Strategy: exchangeCodeForToken(code)
+    Strategy->>Discord: POST /oauth2/token
+    Discord-->>Strategy: { access_token, refresh_token }
+    
+    CmdHandler->>Strategy: getUserProfile(access_token)
+    Strategy->>Discord: GET /api/users/@me (Authorization: Bearer token)
+    Discord-->>Strategy: { id, email, username }
 
-    CmdHandler->>Provider: Obtener perfil usuario
-    Provider-->>CmdHandler: { id, email, username }
+    CmdHandler->>DB: Buscar user_identity (provider=discord, provider_user_id=id)
+    alt Usuario NO existe
+        CmdHandler->>DB: INSERT User + INSERT UserIdentity
+    else Usuario YA existe
+        CmdHandler->>DB: UPDATE UserIdentity tokens
+    end
 
-    CmdHandler->>DB: Buscar/crear usuario + identidad
-    CmdHandler->>JWT: Generar JWT
+    CmdHandler->>JWT: Generar JWT con { sub, email, provider }
+    JWT-->>CmdHandler: token
 
-    CmdHandler-->>AuthCtrl: { user, token }
+    CmdHandler-->>Mediator: { user, token }
+    Mediator-->>AuthCtrl: { user, token }
     AuthCtrl-->>FE: { user, token }
+```
