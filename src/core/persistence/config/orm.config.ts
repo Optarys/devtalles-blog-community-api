@@ -24,7 +24,9 @@ export class ORMConfiguration extends ModuleRegister {
                         password: config.get<string>("DB_PASS"),
                         database: config.get<string>("DB_NAME"),
                         logging: true,
-                        ssl: false,                   
+                        ssl: {
+                            ca: config.get<string>('DB_CERT')
+                        },                   
                         entities: [__dirname + '/../models/*.model{.ts,.js}'], // 👈 EF-style discovery
                     }),
                 }),
