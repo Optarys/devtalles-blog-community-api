@@ -16,10 +16,11 @@
 1. [Descripción](#-descripción)
 2. [Requisitos previos](#-requisitos-previos)
 3. [Iniciar el proyecto](#-iniciar-el-proyecto)
-4. [Diagramas de arquitectura](#-diagramas-de-arquitectura)
+4. [Migraciones](#-migraciones)
+5. [Diagramas de arquitectura](#-diagramas-de-arquitectura)
    - [Flujo OAuth2 con Discord/Google](#flujo-oauth2-con-discordgoogle)
-5. [Recursos](#-recursos)
-6. [Licencia](#-licencia)
+6. [Recursos](#-recursos)
+7. [Licencia](#-licencia)
 
 ---
 
@@ -54,6 +55,22 @@ $ yarn start:prod
 
 # Pruebas unitarias
 $ yarn test
+```
+## Migraciones
+
+```bash
+# Sintaxis general
+$ yarn migration:create <ruta/nombre_de_la_migracion> -d <ruta-de-data-source>
+
+# Aplicar migraciones
+$ yarn migration:run -d <ruta-de-data-source>
+
+# Ejemplos
+# Creando una migración
+$ yarn migration:create src/database/migrations/InitialSchema -d src/core/persistence/config/data-source.ts
+
+# Ejecutando migraciones
+$ yarn migration:run -d src/core/persistence/config/data-source.ts
 ```
 ---
 ## 🏗️ Diagramas de arquitectura
