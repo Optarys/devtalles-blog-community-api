@@ -1,14 +1,16 @@
+import * as fs from 'fs';
 import { ModuleRegister } from "@core/common/contracts";
 import { DynamicModule } from "@nestjs/common";
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
-
+const isProd = process.env.NODE_ENV === 'production';
 /**
   * Clase se utiliza la configurar la conexion de la base de datos con el ORM.
 */
 export class ORMConfiguration extends ModuleRegister {
     static override register(): DynamicModule {
+        console.log(isProd)
         return {
             module: ORMConfiguration,
             imports: [
@@ -25,7 +27,9 @@ export class ORMConfiguration extends ModuleRegister {
                         database: config.get<string>("DB_NAME"),
                         logging: true,
                         ssl: {
-                            ca: config.get<string>('DB_CERT')
+                            ca: isProd 
+                            ? fs.readFileSync('/etc/secrets/prod-ca-2021.crt').toString() // Secretos dentro de Render
+                            : config.get<string>('DB_CERT') 
                         },                   
                         entities: [__dirname + '/../models/*.model{.ts,.js}'], // 👈 EF-style discovery
                     }),
