@@ -1,6 +1,6 @@
 import { OAuth2Command, RedirectOauth2Query } from '@auth/application/features/oauth2';
 import { MediatorService } from '@core/common/services';
-import { BadRequestException, Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { type Response } from 'express';
 
