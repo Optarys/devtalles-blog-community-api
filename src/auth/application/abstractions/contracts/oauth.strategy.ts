@@ -1,4 +1,37 @@
-import { Logger, NotImplementedException } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
+
+
+export interface IOAuth2Contract {
+    /**
+     * Genera la URL de autorización para redirigir al usuario al proveedor OAuth2.
+     *
+     * @param state Valor opcional para mantener el estado entre la petición y la respuesta (CSRF protection).
+     * @returns URL completa a la que debe redirigirse el usuario para iniciar sesión.
+     * @throws {NotImplementedException} Si no es implementado en la subclase.
+     */
+    getAuthorizationUrl(state: string): string;
+    /**
+     * Intercambia un "authorization code" recibido desde el proveedor
+     * por un `accessToken` y opcionalmente un `refreshToken`.
+     *
+     * @param code Código de autorización devuelto por el proveedor tras el login.
+     * @returns Promesa que resuelve en un objeto con el `accessToken` y, si aplica, `refreshToken`.
+     * @throws {NotImplementedException} Si no es implementado en la subclase.
+     */
+    exchangeCodeForToken(code: string): Promise<{ accessToken: string; refreshToken?: string }>;
+    /**
+    * Obtiene la información básica del perfil del usuario autenticado
+    * usando el `accessToken` emitido por el proveedor.
+    *
+    * @param accessToken Token de acceso válido emitido por el proveedor.
+    * @returns Promesa que resuelve en un objeto con información mínima del usuario:
+    * - `id`: identificador único en el proveedor.
+    * - `email`: correo electrónico del usuario (si está disponible).
+    * - `name`: nombre del usuario (si está disponible).
+    * @throws {NotImplementedException} Si no es implementado en la subclase.
+    */
+    getUserProfile(accessToken: string): Promise<{ id: string; email?: string; name?: string }>;
+}
 
 /**
  * Clase base abstracta para estrategias OAuth2.
@@ -6,7 +39,7 @@ import { Logger, NotImplementedException } from "@nestjs/common";
  * Define el contrato que deben implementar todas las estrategias
  * de autenticación mediante OAuth2 (Google, Discord, GitHub, etc.).
  */
-export abstract class OAuth2Strategy {
+export abstract class OAuth2Strategy implements IOAuth2Contract {
     /**
      * Logger para depuración y seguimiento.
      */
@@ -25,44 +58,16 @@ export abstract class OAuth2Strategy {
     ) {
         this.provider = options.provider;
     }
-
-    /**
-     * Genera la URL de autorización para redirigir al usuario al proveedor OAuth2.
-     *
-     * @param state Valor opcional para mantener el estado entre la petición y la respuesta (CSRF protection).
-     * @returns URL completa a la que debe redirigirse el usuario para iniciar sesión.
-     * @throws {NotImplementedException} Si no es implementado en la subclase.
-     */
     getAuthorizationUrl(state: string): string {
-        throw new NotImplementedException();
+        throw new Error("Method not implemented.");
     }
-
-    /**
-     * Intercambia un "authorization code" recibido desde el proveedor
-     * por un `accessToken` y opcionalmente un `refreshToken`.
-     *
-     * @param code Código de autorización devuelto por el proveedor tras el login.
-     * @returns Promesa que resuelve en un objeto con el `accessToken` y, si aplica, `refreshToken`.
-     * @throws {NotImplementedException} Si no es implementado en la subclase.
-     */
-    exchangeCodeForToken(code: string): Promise<{ accessToken: string; refreshToken?: string }> {
-        throw new NotImplementedException();
+    exchangeCodeForToken(code: string): Promise<{ accessToken: string; refreshToken?: string; }> {
+        throw new Error("Method not implemented.");
     }
-
-    /**
-     * Obtiene la información básica del perfil del usuario autenticado
-     * usando el `accessToken` emitido por el proveedor.
-     *
-     * @param accessToken Token de acceso válido emitido por el proveedor.
-     * @returns Promesa que resuelve en un objeto con información mínima del usuario:
-     * - `id`: identificador único en el proveedor.
-     * - `email`: correo electrónico del usuario (si está disponible).
-     * - `name`: nombre del usuario (si está disponible).
-     * @throws {NotImplementedException} Si no es implementado en la subclase.
-     */
-    getUserProfile(accessToken: string): Promise<{ id: string; email?: string; name?: string }> {
-        throw new NotImplementedException();
+    getUserProfile(accessToken: string): Promise<{ id: string; email?: string; name?: string; }> {
+        throw new Error("Method not implemented.");
     }
+    
 }
 
 /**

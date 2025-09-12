@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/features/oauth2';
 import { AuthContext } from './infrastructure/context';
 import { OAuth2Strategy } from './application/abstractions/contracts';
+import { GitHubStrategy } from './infrastructure/strategys/github.strategy';
 
 @Module({
     imports: [
@@ -31,11 +32,11 @@ import { OAuth2Strategy } from './application/abstractions/contracts';
         AuthContext,
         GoogleStrategy,
         DiscordStrategy,
-        
+        GitHubStrategy,
         {
             provide: OAUTH_STRATEGIES,
             useFactory: (...strategies: OAuth2Strategy[]) => strategies,
-            inject: [GoogleStrategy, DiscordStrategy],
+            inject: [GoogleStrategy, DiscordStrategy, GitHubStrategy],
         },
         OAuthStrategyService,
         OAuth2CommandHandler,

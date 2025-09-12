@@ -3,7 +3,7 @@ import { IsIn, IsNotEmpty } from "class-validator";
 
 export class OAuth2Command extends Command<any> {
     @IsNotEmpty()
-    @IsIn(['google', 'discord'],)
+    @IsIn(['google', 'discord', 'github'],)
     readonly provider: string;
 
     @IsNotEmpty()

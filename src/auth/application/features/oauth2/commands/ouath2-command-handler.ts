@@ -4,7 +4,7 @@ import { ICommandHandler } from "@core/common/handlers";
 import { OAuth2Command } from "./ouath2-command";
 import { Result } from "@core/common/responses";
 import { AuthContext } from "@auth/infrastructure/context";
-import { OAuthStrategyService } from "@auth/application/services/oauth.service";
+import { OAuthStrategyService } from "@auth/application/services";
 import { JwtService } from '@nestjs/jwt'
 import { OAuthProvider, UserStatus } from "@core/persistence/models";
 
@@ -20,7 +20,6 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
 
   async execute(command: OAuth2Command): Promise<Result<any>> {
     try {
-
       // 1. Obtener la estrategia correspondiente
       const strategy = this.strategyService.getStrategy(command.provider);
 
@@ -41,6 +40,25 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
       });
 
       let user = identity?.user;
+
+      // APLICA FEDERACION DE IDENTIDADES
+      // 🔹 Si no existe identidad, pero sí hay un usuario con el mismo email
+      if (!user && profile.email) {
+        
+        user = await this.context.users.findOne({ where: { email: profile.email } }) ?? undefined;
+
+        if (user) {
+          // Vinculamos la nueva identidad a la cuenta existente
+          const newIdentity = this.context.userIdentities.create({
+            provider: command.provider as OAuthProvider,
+            providerUserId: profile.id,
+            providerUserData: profile,
+            user,
+          });
+          await this.context.userIdentities.save(newIdentity);
+        }
+      }
+      //
 
       // 5. Si no existe, crear el usuario y la identidad
       if (!user) {
@@ -80,7 +98,7 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
       });
     } catch (err) {
       this.logger.error(err);
-      throw err;
+      return Result.failure('Error en OAuth2 login', err);
     }
   }
 }
