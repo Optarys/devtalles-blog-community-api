@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "./role.model";
+import { RolePermission } from "./role-permission.model";
 
 @Entity('permissions')
 export class Permission {
@@ -15,6 +16,6 @@ export class Permission {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToMany(() => Role, (role) => role.permissions)
-  roles: Role[];
+  @OneToMany(() => RolePermission, (rp) => rp.permission)
+  rolePermissions: RolePermission[];
 }
