@@ -31,6 +31,15 @@
       "@auth/presentation/*": [
         "src/auth/presentation/*"
       ],
+      "@blog/application/*": [
+        "src/blog/application/*"
+      ],
+      "@blog/infrastructure/*": [
+        "src/blog/infrastructure/*"
+      ],
+      "@blog/presentation/*": [
+        "src/blog/presentation/*"
+      ],
       "@core/*": [
         "src/core/*"
       ]
