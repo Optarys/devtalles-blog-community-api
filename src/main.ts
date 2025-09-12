@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger({
       prefix: 'BLOG-API',
-      logLevels: ['log', 'error', 'warn'],
+      logLevels: ['log', 'error', 'warn', 'verbose'],
     }),
   });
 

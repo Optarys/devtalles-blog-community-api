@@ -20,6 +20,7 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
 
   async execute(command: OAuth2Command): Promise<Result<any>> {
     try {
+
       // 1. Obtener la estrategia correspondiente
       const strategy = this.strategyService.getStrategy(command.provider);
 
@@ -79,7 +80,7 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
       });
     } catch (err) {
       this.logger.error(err);
-      return Result.failure('Error en OAuth2 login', err);
+      throw err;
     }
   }
 }

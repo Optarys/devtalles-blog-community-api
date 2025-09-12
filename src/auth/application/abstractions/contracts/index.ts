@@ -1,1 +1,1 @@
-export { type IOAuthStrategy } from './oauth.strategy';
+export { OAuth2Strategy } from './oauth.strategy'

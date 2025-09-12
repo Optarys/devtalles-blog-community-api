@@ -1,7 +1,14 @@
 import { Query } from "@nestjs/cqrs";
+import { IsIn, IsNotEmpty } from "class-validator";
 
 export class RedirectOauth2Query extends Query<string> {
-    constructor(public readonly provider: string) {
+
+    @IsNotEmpty()
+    @IsIn(['discord', 'google'])
+    readonly provider: string;
+
+    constructor(provider: string) {
         super();
+        this.provider = provider; // asignar al readonly
     }
 }

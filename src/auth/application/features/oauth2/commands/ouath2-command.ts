@@ -1,7 +1,17 @@
 import { Command } from "@nestjs/cqrs";
+import { IsIn, IsNotEmpty } from "class-validator";
 
 export class OAuth2Command extends Command<any> {
-    constructor(public readonly provider: string, public readonly code: string){
-        super()
+    @IsNotEmpty()
+    @IsIn(['google', 'discord'],)
+    readonly provider: string;
+
+    @IsNotEmpty()
+    readonly code: string
+
+    constructor(provider: string, code: string) {
+        super();
+        this.provider = provider;
+        this.code = code;
     }
 }

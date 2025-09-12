@@ -1,10 +1,9 @@
 import { Result } from '@core/common/responses';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, Logger } from '@nestjs/common';
 import { ICommand, Command, IQuery, Query, CommandBus, QueryBus } from '@nestjs/cqrs';
 import { validateOrReject, ValidationError } from 'class-validator';
 import { getMetadataStorage } from 'class-validator';
 import { ModuleRef } from '@nestjs/core';
-
 @Injectable()
 export class MediatorService {
     private readonly logger = new Logger(MediatorService.name);
@@ -31,38 +30,44 @@ export class MediatorService {
             }
 
             // ✅ Resuelve dinámicamente el bus correspondiente
-            const bus = this.isCommand(message)
+            const type = this.detectMessageType(message);
+
+            const bus = type === 'command'
                 ? this.moduleRef.get(CommandBus, { strict: false })
                 : this.moduleRef.get(QueryBus, { strict: false });
 
-            console.log(bus);
-
-            return await this.executeBus(bus, message);
+            return await this.executeBus(bus, message, type);
         } catch (error) {
             this.logger.error(`${message.constructor.name} failed: ${error}`);
-            return this.handleError(error);
+
+            //return this.handleError(error);
+            //return this.handleError2(error);
+            this.throwHttpError(error);  // 🔹 lanza excepción automáticamente
         }
     }
 
     private async executeBus<TMessage extends ICommand | IQuery, TResult>(
         bus: CommandBus | QueryBus,
         message: TMessage,
+        type: MessageType
     ): Promise<TResult> {
-        
-        if (this.isCommand(message)) {
-            this.logger.log('Ejecutando Bus de comandos')
+        if (type === 'command') {
+            this.logger.log('Ejecutando Bus de comandos');
             return (bus as CommandBus).execute(message as ICommand);
         } else {
-             this.logger.log('Ejecutando Bus de consultas')
+            this.logger.log('Ejecutando Bus de consultas');
             return (bus as QueryBus).execute(message as IQuery);
         }
     }
 
 
     // ---------------- HELPERS ----------------
-    private isCommand(obj: any): obj is ICommand {
-        return obj.constructor.name.endsWith('Command');
+    private detectMessageType(obj: any): MessageType {
+        if (obj instanceof Command) return 'command';
+        if (obj instanceof Query) return 'query';
+        throw new Error(`El mensaje ${obj.constructor.name} no es ni Command ni Query`);
     }
+
 
     private handleError(error: any): Result<any> {
         if (Array.isArray(error) && error[0] instanceof ValidationError) {
@@ -83,6 +88,42 @@ export class MediatorService {
 
         return Result.failure(error.message || 'Unknown error');
     }
+
+    private handleError2(error: any): never {
+        if (Array.isArray(error) && error[0] instanceof ValidationError) {
+            const messages = this.flattenErrors(error);
+            throw new BadRequestException({ message: 'Validation failed', details: messages });
+        }
+
+        if (error instanceof HttpException) {
+            throw error; // ya tiene status code correcto
+        }
+
+        if (error.response) {
+            throw new HttpException(error.response, error.status || 500);
+        }
+
+        throw new HttpException(error.message || 'Unknown error', 500);
+    }
+
+    private throwHttpError(error: any): never {
+        if (Array.isArray(error) && error[0] instanceof ValidationError) {
+            const messages = this.flattenErrors(error);
+            throw new BadRequestException({ message: 'Validation failed', details: messages });
+        }
+
+        if (error instanceof HttpException) {
+            throw error; // ya tiene status
+        }
+
+        if (error.response) {
+            throw new HttpException(error.response, error.status || 500);
+        }
+
+        throw new HttpException({ message: error.message || 'Unknown error' }, 500);
+    }
+
+
 
     private flattenErrors(
         errors: ValidationError[],
@@ -121,3 +162,5 @@ export class MediatorService {
         return metadata.length > 0;
     }
 }
+
+type MessageType = 'command' | 'query';

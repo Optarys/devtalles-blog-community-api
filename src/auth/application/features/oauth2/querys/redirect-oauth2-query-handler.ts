@@ -10,8 +10,8 @@ export class RedirectOauth2QueryHandler implements IQueryHandler<RedirectOauth2Q
     constructor(
         private readonly strategyService: OAuthStrategyService,
     ) { }
+    
     async execute(query: RedirectOauth2Query): Promise<Result<string>> {
-
         const strategy = this.strategyService.getStrategy(query.provider);
         const result = strategy.getAuthorizationUrl(query.provider);
         return Result.success(result)
