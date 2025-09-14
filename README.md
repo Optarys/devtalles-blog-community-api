@@ -99,7 +99,7 @@ El esquema GraphQL está disponible en la ruta: `http(s)://<host>/graphql`
 Desde ahí podrás:
 
 - Consultar el **schema** de la API.
-- Usar **GraphQL Playground** o **Apollo Studio Explorer** (dependiendo de la configuración).
+- Usar **Postman**, **Insomnia** o **Apollo Studio Explorer**.
 - Ejecutar queries directamente.
 
 Ejemplo de consulta simple:
