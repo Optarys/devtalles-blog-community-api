@@ -1,18 +1,3 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  JoinTable,
-  JoinColumn,
-  PrimaryColumn,
-  Generated,
-} from 'typeorm';
 
 /* -------------------- ENUMS -------------------- */
 export enum AuthCredentialType {
@@ -26,37 +11,3 @@ export enum OAuthProvider {
   GITHUB = 'github',
   OTHER = 'other',
 }
-
-/* -------------------- ROLES -------------------- */
-
-
-/* -------------------- PERMISSIONS -------------------- */
-
-
-/* -------------------- USER STATUSES -------------------- */
-
-
-/* -------------------- USERS -------------------- */
-
-
-/* -------------------- USER CREDENTIALS -------------------- */
-
-
-/* -------------------- AUTH PROVIDERS -------------------- */
-
-/* -------------------- USER IDENTITIES -------------------- */
-
-
-/* -------------------- POST CATEGORIES -------------------- */
-
-
-/* -------------------- POSTS -------------------- */
-
-
-/* -------------------- POST TAGS -------------------- */
-
-
-/* -------------------- COMMENTS -------------------- */
-
-
-/* -------------------- USER SESSIONS -------------------- */
