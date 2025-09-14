@@ -17,11 +17,12 @@
 2. [Requisitos previos](#-requisitos-previos)
 3. [Iniciar el proyecto](#-iniciar-el-proyecto)
 4. [Migraciones](#-migraciones)
-5. [Diagramas de arquitectura](#-diagramas-de-arquitectura)
+5. [Puntos de acceso](#-puntos-de-acceso)
+6. [Diagramas de arquitectura](#-diagramas-de-arquitectura)
    - [Flujo OAuth2 con Discord/Google/Github](#flujo-oauth2-con-discordgooglegithub)
    - [Flujo de consultas Blog con GraphQL](#flujo-de-consultas-blog-con-graphql)
-6. [Recursos](#-recursos)
-7. [Licencia](#-licencia)
+7. [Recursos](#-recursos)
+8. [Licencia](#-licencia)
 
 ---
 
@@ -57,6 +58,7 @@ $ yarn start:prod
 # Pruebas unitarias
 $ yarn test
 ```
+
 ## Migraciones
 
 ```bash
@@ -73,52 +75,99 @@ $ yarn migration:create src/database/migrations/InitialSchema -d src/core/persis
 # Ejecutando migraciones
 $ yarn migration:run -d src/core/persistence/config/data-source.ts
 ```
+
+## 🌍 Puntos de acceso
+
+### REST API
+
+Los endpoints REST de la API se encuentran documentados dentro de la carpeta [docs](./docs) de este mismo repositorio.  
+Allí podrás importar la colección en Postman para probarlos fácilmente.
+
+👉 [Devtalles Blog API Rest.postman_collection.json](./docs/Devtalles%20Blog%20API%20Rest.postman_collection.json)
+
+#### ▶️ Uso en Postman
+
+1. Abre Postman.
+2. Importa la colección `Devtalles Blog API Rest.postman_collection.json`.
+3. Configura las variables de entorno si es necesario (por ejemplo: `{{baseUrl}}`, `{{authToken}}`).
+4. Empieza a probar los endpoints disponibles (posts, categorías, tags, auth, etc.).
+
+### GraphQL API
+
+El esquema GraphQL está disponible en la ruta: `http(s)://<host>/graphql`
+
+Desde ahí podrás:
+
+- Consultar el **schema** de la API.
+- Usar **GraphQL Playground** o **Apollo Studio Explorer** (dependiendo de la configuración).
+- Ejecutar queries directamente.
+
+Ejemplo de consulta simple:
+
+```graphql
+query {
+  posts {
+    id
+    title
+    slug
+    tags {
+      name
+    }
+  }
+}
+```
+
 ---
+
 ## 🏗️ Diagramas de arquitectura
+
 ### Flujo OAuth2 con Discord/Google/Github
-  ```mermaid
+
+```mermaid
 sequenceDiagram
-    participant FE as Frontend
-    participant OAuth2Provider as OAuth2 Provider
-    participant AuthCtrl as AuthController
-    participant Mediator as MediatorService
-    participant CmdHandler as OAuth2CommandHandler
-    participant Strategy as OAuth2Strategy
-    participant DB as Database
-    participant JWT as JwtService
+  participant FE as Frontend
+  participant OAuth2Provider as OAuth2 Provider
+  participant AuthCtrl as AuthController
+  participant Mediator as MediatorService
+  participant CmdHandler as OAuth2CommandHandler
+  participant Strategy as OAuth2Strategy
+  participant DB as Database
+  participant JWT as JwtService
 
-    FE->>OAuth2Provider: GET /oauth2/authorize (client_id, redirect_uri, scope, state)
-    OAuth2Provider-->>FE: Redirect con code + state
-    FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX&state=YYY
+  FE->>OAuth2Provider: GET /oauth2/authorize (client_id, redirect_uri, scope, state)
+  OAuth2Provider-->>FE: Redirect con code + state
+  FE->>AuthCtrl: GET /auth/oauth2/callback?code=XXX&state=YYY
 
-    AuthCtrl->>Mediator: execute(new OAuth2Command(code, state))
+  AuthCtrl->>Mediator: execute(new OAuth2Command(code, state))
 
-    Mediator->>CmdHandler: dispatch OAuth2Command
+  Mediator->>CmdHandler: dispatch OAuth2Command
 
-    CmdHandler->>Strategy: exchangeCodeForToken(code)
-    Strategy->>OAuth2Provider: POST /oauth2/token
-    OAuth2Provider-->>Strategy: { access_token, refresh_token }
+  CmdHandler->>Strategy: exchangeCodeForToken(code)
+  Strategy->>OAuth2Provider: POST /oauth2/token
+  OAuth2Provider-->>Strategy: { access_token, refresh_token }
 
-    CmdHandler->>Strategy: getUserProfile(access_token)
-    Strategy->>OAuth2Provider: GET /api/user (Authorization: Bearer token)
-    OAuth2Provider-->>Strategy: { id, email, username }
+  CmdHandler->>Strategy: getUserProfile(access_token)
+  Strategy->>OAuth2Provider: GET /api/user (Authorization: Bearer token)
+  OAuth2Provider-->>Strategy: { id, email, username }
 
-    CmdHandler->>DB: Buscar user_identity (provider=oauth2, provider_user_id=id)
-    alt Usuario NO existe
-        CmdHandler->>DB: INSERT User + INSERT UserIdentity
-    else Usuario YA existe
-        CmdHandler->>DB: UPDATE UserIdentity tokens
-    end
+  CmdHandler->>DB: Buscar user_identity (provider=oauth2, provider_user_id=id)
+  alt Usuario NO existe
+      CmdHandler->>DB: INSERT User + INSERT UserIdentity
+  else Usuario YA existe
+      CmdHandler->>DB: UPDATE UserIdentity tokens
+  end
 
-    CmdHandler->>JWT: Generar JWT con { sub, email, provider }
-    JWT-->>CmdHandler: token
+  CmdHandler->>JWT: Generar JWT con { sub, email, provider }
+  JWT-->>CmdHandler: token
 
-    CmdHandler-->>Mediator: { user, token }
-    Mediator-->>AuthCtrl: { user, token }
-    AuthCtrl-->>FE: { user, token }
+  CmdHandler-->>Mediator: { user, token }
+  Mediator-->>AuthCtrl: { user, token }
+  AuthCtrl-->>FE: { user, token }
 
-  ```
+```
+
 ### Flujo de consultas Blog con GraphQL
+
 ```mermaid
 sequenceDiagram
     participant Client as GraphQL Client
@@ -146,5 +195,5 @@ sequenceDiagram
     Service->>DB: SELECT * FROM post_tags INNER JOIN post_tags_posts WHERE post_id = postId
     DB-->>Service: PostTag[]
     Service-->>Resolver: TagType[]
-    Resolver-->>Client: TagType[] 
+    Resolver-->>Client: TagType[]
 ```
