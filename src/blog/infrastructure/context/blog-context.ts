@@ -16,11 +16,11 @@ export class BlogContext {
         return this.context.comments;
     }
 
-    get categories(): Repository<PostCategory> {
+    get postCategories(): Repository<PostCategory> {
         return this.context.postCategories;
     }
 
-    get tags(): Repository<PostTag> {
+    get postTags(): Repository<PostTag> {
         return this.context.postTags;
     }
 }

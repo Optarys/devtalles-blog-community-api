@@ -13,10 +13,6 @@ import { BlogModule } from './blog/blog.module';
     AuthModule,
     BlogModule,
 
-  ],
-  controllers: [],
-  providers: [
-
-  ],
+  ]
 })
 export class AppModule { }
