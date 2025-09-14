@@ -18,8 +18,8 @@
 3. [Iniciar el proyecto](#-iniciar-el-proyecto)
 4. [Migraciones](#-migraciones)
 5. [Diagramas de arquitectura](#-diagramas-de-arquitectura)
-   - [Flujo OAuth2 con Discord/Google/Github](#flujo-oauth2-con-discordgoogle)
-   - [Flujo de consultas Blog con GraphQ](#)
+   - [Flujo OAuth2 con Discord/Google/Github](#flujo-oauth2-con-discordgooglegithub)
+   - [Flujo de consultas Blog con GraphQ](#flujo-de-consultas-blog-con-graphql)
 6. [Recursos](#-recursos)
 7. [Licencia](#-licencia)
 
