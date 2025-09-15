@@ -1,14 +1,14 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserStatus } from "./user-status.model";
-import { Role } from "./role.model";
-import { UserIdentity } from "./user-identity.model";
-import { UserCredential } from "./user-credential.model";
-import { UserSession } from "./user-session.model";
-import { Comment } from "./comment.model";
+import { UserStatusEntity } from "./user-status.model";
+import { RoleEntity } from "./role.model";
+import { UserIdentityEntity } from "./user-identity.model";
+import { UserCredentialEntity } from "./user-credential.model";
+import { UserSessionEntity } from "./user-session.model";
+import { CommentEntity } from "./comment.model";
 import { PostEntity } from "./post.model";
 
 @Entity('users')
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,9 +30,9 @@ export class User {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => UserStatus, (status) => status.users, { nullable: false})
+  @ManyToOne(() => UserStatusEntity, (status) => status.users, { nullable: false})
   @JoinColumn({ name: 'status_id' })
-  status: UserStatus;
+  status: UserStatusEntity;
 
   @Column({ type: 'text', nullable: true })
   bio: string;
@@ -49,26 +49,27 @@ export class User {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
-  @OneToMany(() => UserCredential, (cred) => cred.user)
-  credentials: UserCredential[];
+  @OneToMany(() => UserCredentialEntity, (cred) => cred.user)
+  credentials: UserCredentialEntity[];
 
-  @OneToMany(() => UserIdentity, (identity) => identity.user)
-  identities: UserIdentity[];
+  @OneToMany(() => UserIdentityEntity, (identity) => identity.user)
+  identities: UserIdentityEntity[];
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => RoleEntity, (role) => role.users, {eager: true})
   @JoinTable({
     name: 'user_roles',
     joinColumn: { name: 'user_id' },
     inverseJoinColumn: { name: 'role_id' },
+    
   })
-  roles: Role[];
+  roles: RoleEntity[];
 
   @OneToMany(() => PostEntity, (post) => post.author)
   posts: PostEntity[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments: CommentEntity[];
 
-  @OneToMany(() => UserSession, (session) => session.user)
-  sessions: UserSession[];
+  @OneToMany(() => UserSessionEntity, (session) => session.user)
+  sessions: UserSessionEntity[];
 }

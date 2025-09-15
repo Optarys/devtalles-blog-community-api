@@ -1,4 +1,4 @@
-import { OAuth2Strategy } from "@auth/application/abstractions/contracts";
+import { OAuth2Strategy } from "@auth/application/contracts";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 

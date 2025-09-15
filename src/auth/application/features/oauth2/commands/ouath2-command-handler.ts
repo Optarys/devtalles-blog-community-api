@@ -6,7 +6,7 @@ import { Result } from "@core/common/responses";
 import { AuthContext } from "@auth/infrastructure/context";
 import { OAuthStrategyService } from "@auth/application/services";
 import { JwtService } from '@nestjs/jwt'
-import { OAuthProvider, UserStatus } from "@core/persistence/models";
+import { OAuthProvider, RoleEntity, UserStatusEntity } from "@core/persistence/models";
 
 @CommandHandler(OAuth2Command)
 export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
@@ -43,21 +43,21 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
 
       // APLICA FEDERACION DE IDENTIDADES
       // 🔹 Si no existe identidad, pero sí hay un usuario con el mismo email
-      if (!user && profile.email) {
-        
-        user = await this.context.users.findOne({ where: { email: profile.email } }) ?? undefined;
+      // if (!user && profile.email) {
 
-        if (user) {
-          // Vinculamos la nueva identidad a la cuenta existente
-          const newIdentity = this.context.userIdentities.create({
-            provider: command.provider as OAuthProvider,
-            providerUserId: profile.id,
-            providerUserData: profile,
-            user,
-          });
-          await this.context.userIdentities.save(newIdentity);
-        }
-      }
+      //   user = await this.context.users.findOne({ where: { email: profile.email } }) ?? undefined;
+
+      //   if (user) {
+      //     // Vinculamos la nueva identidad a la cuenta existente
+      //     const newIdentity = this.context.userIdentities.create({
+      //       provider: command.provider as OAuthProvider,
+      //       providerUserId: profile.id,
+      //       providerUserData: profile,
+      //       user,
+      //     });
+      //     await this.context.userIdentities.save(newIdentity);
+      //   }
+      // }
       //
 
       // 5. Si no existe, crear el usuario y la identidad
@@ -65,13 +65,19 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
         const [firstName, ...lastParts] = (profile.name ?? "").split(" ");
         const lastName = lastParts.join(" ");
 
+        const defaultRole = await this.context.roles.findOne({
+          where: { name: 'reader' } // o el rol que quieras asignar
+        });
+
+
         user = this.context.users.create({
           email: profile.email,
           firstName,
           lastName,
           username: profile.name ?? profile.email?.split('@')[0] ?? profile.id,
           isActive: true,
-          status: { id: 2 } as UserStatus,
+          status: { id: 2 } as UserStatusEntity,
+          roles: defaultRole ? [defaultRole] : []
         });
 
         await this.context.users.save(user);
@@ -85,15 +91,18 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
         await this.context.userIdentities.save(newIdentity);
       }
 
+      console.log(user);
+
       // 6. Generar JWT interno
       const jwt = await this.jwtService.signAsync({
         sub: user.externalId,
-        email: user.email,
+        username: user.username,
+        role: user.roles[0].name,
         provider: command.provider,
       });
 
       return Result.success({
-        user,
+        redirect: await this.getUrlRedirection(),
         token: jwt,
       });
     } catch (err) {
@@ -101,4 +110,29 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
       return Result.failure('Error en OAuth2 login', err);
     }
   }
+
+
+  async getUrlRedirection(): Promise<string | null> {
+    const config = await this.context.config
+      .createQueryBuilder('cfg')
+      .select(['cfg.value'])
+      .where('cfg.config_type = :type', { type: 'redirections' })
+      .getOne();
+
+    if (!config) {
+      return null; // o lanzar error
+    }
+
+    // Tipar el valor para seguridad
+    const value = config.value as {
+      redirections?: {
+        oauth2?: {
+          success?: { url: string }
+        }
+      }
+    };
+
+    return value.redirections?.oauth2?.success?.url ?? null;
+  }
+
 }

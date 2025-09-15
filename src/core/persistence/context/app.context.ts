@@ -2,19 +2,20 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 
 import {
-    Role,
-    Permission,
-    UserStatus,
-    User,
-    UserCredential,
-    AuthProvider,
-    UserIdentity,
-    PostCategory,
+    RoleEntity,
+    PermissionEntity,
+    UserStatusEntity,
+    UserEntity,
+    UserCredentialEntity,
+    AuthProviderEntity,
+    UserIdentityEntity,
+    PostCategoryEntity,
     PostEntity,
-    PostTag,
-    Comment,
-    UserSession,
+    PostTagEntity,
+    CommentEntity,
+    UserSessionEntity,
 } from "@core/persistence/models";
+import { ConfigurationModel } from "../models/config.model";
 
 @Injectable()
 export class AppContext {
@@ -23,52 +24,56 @@ export class AppContext {
     get context(): DataSource {
         return this.dataSource;
     }
+
+    get configuration(): Repository<ConfigurationModel> {
+        return this.dataSource.getRepository(ConfigurationModel)
+    }
     /* -------------------- GETTERS -------------------- */
-    get roles(): Repository<Role> {
-        return this.dataSource.getRepository(Role);
+    get roles(): Repository<RoleEntity> {
+        return this.dataSource.getRepository(RoleEntity);
     }
 
-    get permissions(): Repository<Permission> {
-        return this.dataSource.getRepository(Permission);
+    get permissions(): Repository<PermissionEntity> {
+        return this.dataSource.getRepository(PermissionEntity);
     }
 
-    get userStatuses(): Repository<UserStatus> {
-        return this.dataSource.getRepository(UserStatus);
+    get userStatuses(): Repository<UserStatusEntity> {
+        return this.dataSource.getRepository(UserStatusEntity);
     }
 
-    get users(): Repository<User> {
-        return this.dataSource.getRepository(User);
+    get users(): Repository<UserEntity> {
+        return this.dataSource.getRepository(UserEntity);
     }
 
-    get userCredentials(): Repository<UserCredential> {
-        return this.dataSource.getRepository(UserCredential);
+    get userCredentials(): Repository<UserCredentialEntity> {
+        return this.dataSource.getRepository(UserCredentialEntity);
     }
 
-    get authProviders(): Repository<AuthProvider> {
-        return this.dataSource.getRepository(AuthProvider);
+    get authProviders(): Repository<AuthProviderEntity> {
+        return this.dataSource.getRepository(AuthProviderEntity);
     }
 
-    get userIdentities(): Repository<UserIdentity> {
-        return this.dataSource.getRepository(UserIdentity);
+    get userIdentities(): Repository<UserIdentityEntity> {
+        return this.dataSource.getRepository(UserIdentityEntity);
     }
 
-    get postCategories(): Repository<PostCategory> {
-        return this.dataSource.getRepository(PostCategory);
+    get postCategories(): Repository<PostCategoryEntity> {
+        return this.dataSource.getRepository(PostCategoryEntity);
     }
 
     get posts(): Repository<PostEntity> {
         return this.dataSource.getRepository(PostEntity);
     }
 
-    get postTags(): Repository<PostTag> {
-        return this.dataSource.getRepository(PostTag);
+    get postTags(): Repository<PostTagEntity> {
+        return this.dataSource.getRepository(PostTagEntity);
     }
 
-    get comments(): Repository<Comment> {
-        return this.dataSource.getRepository(Comment);
+    get comments(): Repository<CommentEntity> {
+        return this.dataSource.getRepository(CommentEntity);
     }
 
-    get userSessions(): Repository<UserSession> {
-        return this.dataSource.getRepository(UserSession);
+    get userSessions(): Repository<UserSessionEntity> {
+        return this.dataSource.getRepository(UserSessionEntity);
     }
 }

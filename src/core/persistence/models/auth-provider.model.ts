@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 import { OAuthProvider } from "./models.model";
 
 @Entity('auth_providers')
-export class AuthProvider {
+export class AuthProviderEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

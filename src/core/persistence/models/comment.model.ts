@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.model";
+import { UserEntity } from "./user.model";
 import { PostEntity } from "./post.model";
 
 @Entity('comments')
-export class Comment {
+export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,9 +11,9 @@ export class Comment {
   @JoinColumn({ name: 'post_id' })
   post: PostEntity;
 
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'SET NULL' })
+  @ManyToOne(() => UserEntity, (user) => user.comments, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 
   @Column({ name: 'author_name', length: 150, nullable: true })
   authorName: string;

@@ -6,6 +6,10 @@ export class AuthContext {
 
     constructor(private readonly context: AppContext) { }
 
+    get config() {
+        return this.context.configuration;
+    }
+
     get roles() {
         return this.context.roles;
     }

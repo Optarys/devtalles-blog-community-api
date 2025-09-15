@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } f
 import { PostEntity } from "./post.model";
 
 @Entity('post_categories')
-export class PostCategory {
+export class PostCategoryEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

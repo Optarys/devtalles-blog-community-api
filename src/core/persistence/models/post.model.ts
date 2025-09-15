@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./user.model";
-import { Comment } from "./comment.model";
-import { PostCategory } from "./post-category.model";
-import { PostTag } from "./post-tag.model";
+import { UserEntity } from "./user.model";
+import { CommentEntity } from "./comment.model";
+import { PostCategoryEntity } from "./post-category.model";
+import { PostTagEntity } from "./post-tag.model";
 import { PostStatus } from "./models.model";
 
 @Entity('posts')
@@ -11,9 +11,9 @@ export class PostEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'SET NULL' })
+  @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'author_id' })
-  author: User;
+  author: UserEntity;
 
   @Column({ length: 255 })
   title: string;
@@ -30,9 +30,9 @@ export class PostEntity {
   @Column({ type: 'enum', enum: PostStatus, default: PostStatus.DRAFT })
   status: PostStatus;
 
-  @ManyToOne(() => PostCategory, (cat) => cat.posts, { nullable: true })
+  @ManyToOne(() => PostCategoryEntity, (cat) => cat.posts, { nullable: true })
   @JoinColumn({ name: 'category_id' })
-  category: PostCategory;
+  category: PostCategoryEntity;
 
   @Column({ name: 'banner_images', type: 'jsonb', nullable: true })
   bannerImages: string[];
@@ -49,14 +49,14 @@ export class PostEntity {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
-  @ManyToMany(() => PostTag, (tag) => tag.posts)
+  @ManyToMany(() => PostTagEntity, (tag) => tag.posts)
   @JoinTable({
     name: 'post_tag_map',
     joinColumn: { name: 'post_id' },
     inverseJoinColumn: { name: 'tag_id' },
   })
-  tags: PostTag[];
+  tags: PostTagEntity[];
 
-  @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
+  @OneToMany(() => CommentEntity, (comment) => comment.post)
+  comments: CommentEntity[];
 }

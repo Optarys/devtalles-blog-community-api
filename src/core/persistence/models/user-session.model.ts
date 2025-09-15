@@ -1,15 +1,15 @@
 import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { User } from "./user.model";
+import { UserEntity } from "./user.model";
 
 @Entity('user_sessions')
-export class UserSession {
+export class UserSessionEntity {
   @PrimaryColumn('uuid')
   @Generated('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.sessions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.sessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 
   @Column({ name: 'user_agent', type: 'text', nullable: true })
   userAgent: string;

@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, NotImplementedException } from "@nestjs/common";
-import { OAuth2Strategy } from "../abstractions/contracts";
+import { OAuth2Strategy } from "../contracts";
 import { OAUTH_STRATEGIES } from "../constants/oauth.constants";
 
 @Injectable()
