@@ -1,5 +1,5 @@
 import { AppContext } from "@core/persistence/context/app.context";
-import { Comment, Post, PostCategory, PostTag } from "@core/persistence/models";
+import { Comment, PostEntity, PostCategory, PostTag, User } from "@core/persistence/models";
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 
@@ -8,7 +8,11 @@ export class BlogContext {
     constructor(private readonly context: AppContext) { }
 
 
-    get posts(): Repository<Post> {
+    get dtSource() {
+        return this.context.context;
+    }
+
+    get posts(): Repository<PostEntity> {
         return this.context.posts;
     }
 
@@ -22,5 +26,9 @@ export class BlogContext {
 
     get postTags(): Repository<PostTag> {
         return this.context.postTags;
+    }
+
+    get postAuthor(): Repository<User> {
+        return this.context.users;
     }
 }

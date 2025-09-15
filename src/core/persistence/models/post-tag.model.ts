@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Post } from "./post.model";
+import { PostEntity } from "./post.model";
 
 @Entity('post_tags')
 export class PostTag {
@@ -12,6 +12,6 @@ export class PostTag {
   @Column({ length: 150, unique: true })
   slug: string;
 
-  @ManyToMany(() => Post, (post) => post.tags)
-  posts: Post[];
+  @ManyToMany(() => PostEntity, (post) => post.tags)
+  posts: PostEntity[];
 }

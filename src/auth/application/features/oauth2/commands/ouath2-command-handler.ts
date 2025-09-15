@@ -87,7 +87,7 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
 
       // 6. Generar JWT interno
       const jwt = await this.jwtService.signAsync({
-        sub: user.id,
+        sub: user.externalId,
         email: user.email,
         provider: command.provider,
       });

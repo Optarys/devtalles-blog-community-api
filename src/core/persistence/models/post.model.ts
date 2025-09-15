@@ -3,9 +3,11 @@ import { User } from "./user.model";
 import { Comment } from "./comment.model";
 import { PostCategory } from "./post-category.model";
 import { PostTag } from "./post-tag.model";
+import { PostStatus } from "./models.model";
 
 @Entity('posts')
-export class Post {
+export class PostEntity {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,18 +27,21 @@ export class Post {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ length: 50, default: 'draft' })
-  status: string;
+  @Column({ type: 'enum', enum: PostStatus, default: PostStatus.DRAFT })
+  status: PostStatus;
 
   @ManyToOne(() => PostCategory, (cat) => cat.posts, { nullable: true })
   @JoinColumn({ name: 'category_id' })
   category: PostCategory;
 
+  @Column({ name: 'banner_images', type: 'jsonb', nullable: true })
+  bannerImages: string[];
+
   @Column({ name: 'seo_meta', type: 'jsonb', nullable: true })
   seoMeta: any;
 
   @Column({ name: 'published_at', type: 'timestamp', nullable: true })
-  publishedAt: Date;
+  publishedAt?: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -4,7 +4,7 @@ import { OAUTH_STRATEGIES } from './application/constants/oauth.constants';
 import { OAuthStrategyService } from './application/services/oauth.service';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { CoreModule } from '@core/core.module';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/features/oauth2';
 import { AuthContext } from './infrastructure/context';
@@ -42,5 +42,6 @@ import { GitHubStrategy } from './infrastructure/strategys/github.strategy';
         OAuth2CommandHandler,
         RedirectOauth2QueryHandler
     ],
+    exports: [JwtModule]
 })
 export class AuthModule { }

@@ -14,7 +14,7 @@ async function bootstrap() {
   });
 
   useSwagger(app);
-  
+
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await app.listen(process.env.PORT ?? 3000);
@@ -39,9 +39,32 @@ async function useSwagger(app: INestApplication<any>) {
     .setDescription('Documentacion de API')
     .setVersion('1.0')
     .addTag('Controladores Principales')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Ingresa tu token JWT aquí',
+        in: 'header'
+      },
+      'JWT-auth', // nombre del security scheme
+    )
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, documentFactory);
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  // Aplica el security scheme globalmente
+  document.components!.securitySchemes = {
+    'JWT-auth': {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    },
+  };
+  document.security = [{ 'JWT-auth': [] }];
+
+  SwaggerModule.setup('swagger', app, document);
 }
 
 bootstrap();

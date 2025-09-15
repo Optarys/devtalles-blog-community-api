@@ -1,6 +1,6 @@
 import { BlogContext } from '@blog/infrastructure/context';
 import { Injectable } from '@nestjs/common';
-import { Comment, Post, PostCategory, PostTag } from '@core/persistence/models';
+import { Comment, PostEntity, PostCategory, PostTag } from '@core/persistence/models';
 
 interface PostFilters {
     slug?: string;
@@ -15,7 +15,7 @@ interface PostFilters {
 export class PostsService {
     constructor(private readonly context: BlogContext) { }
 
-    async findAllBy(filters: PostFilters): Promise<Post[]> {
+    async findAllBy(filters: PostFilters): Promise<PostEntity[]> {
         let query = this.context.posts
             .createQueryBuilder('post')
             .leftJoinAndSelect('post.author', 'author')
