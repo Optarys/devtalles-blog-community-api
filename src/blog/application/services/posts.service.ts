@@ -1,6 +1,6 @@
 import { BlogContext } from '@blog/infrastructure/context';
 import { Injectable } from '@nestjs/common';
-import { Comment, PostEntity, PostCategory, PostTag } from '@core/persistence/models';
+import { CommentEntity, PostEntity, PostCategoryEntity, PostTagEntity } from '@core/persistence/models';
 
 interface PostFilters {
     slug?: string;
@@ -38,21 +38,21 @@ export class PostsService {
     }
 
 
-    async findCommentsByPostId(postId: number): Promise<Comment[]> {
+    async findCommentsByPostId(postId: number): Promise<CommentEntity[]> {
         return await this.context.comments
             .createQueryBuilder('comment')
             .where('comment.post_id = :postId', { postId })
             .getMany();
     }
 
-    async findTagsByPostId(postId: number): Promise<PostTag[]> {
+    async findTagsByPostId(postId: number): Promise<PostTagEntity[]> {
         return await this.context.postTags
             .createQueryBuilder('tag')
             .innerJoin('tag.posts', 'post', 'post.id = :postId', { postId })
             .getMany();
     }
 
-    async findCategoriesByPostId(postId: number): Promise<PostCategory[]> {
+    async findCategoriesByPostId(postId: number): Promise<PostCategoryEntity[]> {
         return await this.context.postCategories
             .createQueryBuilder('ct')
             .innerJoin('ct.posts', 'post', 'post.id = :postId', { postId })

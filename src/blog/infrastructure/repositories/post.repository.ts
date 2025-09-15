@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogContext } from '@blog/infrastructure/context';
 import { Post } from '@blog/domain/entities/post';
 import { PostEntity, PostStatus } from '@core/persistence/models';
-import { PostTag } from '@core/persistence/models/post-tag.model';
+import { PostTagEntity } from '@core/persistence/models/post-tag.model';
 import { parseEnum } from '@core/helpers';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class PostRepository {
             entity.author = author;
 
             // 2️⃣ Mapear tags
-            const tags: PostTag[] = [];
+            const tags: PostTagEntity[] = [];
             for (const t of post.getTags()) {
                 let existing = await manager.findOne(this.context.postTags.target, {
                     where: { slug: t.getSlug() },
@@ -114,7 +114,7 @@ export class PostRepository {
 
             // 5️⃣ Tags (si se mandaron nuevos)
             if (post.getTags() && post.getTags().length > 0) {
-                const tags: PostTag[] = [];
+                const tags: PostTagEntity[] = [];
                 for (const t of post.getTags()) {
                     let existingTag = await manager.findOne(this.context.postTags.target, {
                         where: { slug: t.getSlug() },

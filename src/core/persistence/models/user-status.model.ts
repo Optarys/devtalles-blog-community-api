@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.model";
+import { UserEntity } from "./user.model";
 
 @Entity('user_statuses')
-export class UserStatus {
+export class UserStatusEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,6 +18,6 @@ export class UserStatus {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @OneToMany(() => User, (user) => user.status)
-  users: User[];
+  @OneToMany(() => UserEntity, (user) => user.status)
+  users: UserEntity[];
 }

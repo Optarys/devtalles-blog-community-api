@@ -91,6 +91,93 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Crear una publicacion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOTZjODc1My05MzcxLTRkMTAtYmFiZi0yNDlmNzc5NGZkNmYiLCJlbWFpbCI6bnVsbCwicHJvdmlkZXIiOiJnaXRodWIiLCJpYXQiOjE3NTc5MjI3NjAsImV4cCI6MTc1NzkyNjM2MH0._Bw_vg4JfFpEB98JALIMPii5cJKVxaflnsryXYXDims",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Probando contenido",
+							"type": "text"
+						},
+						{
+							"key": "summary",
+							"value": "Esto es una prueba",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "Contenido del post...",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "noticias",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "nestjs,typescript,nodejs,.net",
+							"description": "lista separada por comas",
+							"type": "text"
+						},
+						{
+							"key": "seoMeta",
+							"value": "{\"keywords\":\"blog,nestjs\"}",
+							"description": "json con las propiedades de metatags",
+							"type": "text"
+						},
+						{
+							"key": "banners",
+							"contentType": "image/png",
+							"type": "file",
+							"src": [
+								"/C:/Users/kevin/OneDrive/Imágenes/Screenshots/Captura de pantalla 2025-04-11 232843.png",
+								"/C:/Users/kevin/OneDrive/Imágenes/Screenshots/Captura de pantalla 2025-04-11 232930.png"
+							]
+						},
+						{
+							"key": "status",
+							"value": "published",
+							"description": "draft o published",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"posts"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:3000/posts' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: multipart/form-data' \\\r\n  -F 'title=Mi primer post' \\\r\n  -F 'content=Contenido del post...' \\\r\n  -F 'category=tecnologia' \\\r\n  -F 'tags=nestjs,typescript' \\\r\n  -F 'seoMeta={\"keywords\":\"blog,nestjs\"}' \\\r\n  -F 'banners=@Captura de pantalla 2025-04-11 231630.png;type=image/png'"
+			},
+			"response": []
 		}
 	]
 }

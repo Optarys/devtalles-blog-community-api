@@ -1,15 +1,15 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.model";
+import { UserEntity } from "./user.model";
 import { AuthCredentialType } from "./models.model";
 
 @Entity('user_credentials')
-export class UserCredential {
+export class UserCredentialEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.credentials, { onDelete: 'CASCADE' })
+    @ManyToOne(() => UserEntity, (user) => user.credentials, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'user_id' })
-    user: User;
+    user: UserEntity;
 
     @Column({ type: 'enum', enum: AuthCredentialType })
     type: AuthCredentialType;

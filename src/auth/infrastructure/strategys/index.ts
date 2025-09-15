@@ -1,2 +1,3 @@
-export { DiscordStrategy } from './discord.strategy';
-export { GoogleStrategy } from './google.strategy';
+export * from './discord.strategy';
+export * from './google.strategy';
+export * from './github.strategy';

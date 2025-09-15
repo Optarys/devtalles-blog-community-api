@@ -74,6 +74,10 @@ $ yarn migration:create src/database/migrations/InitialSchema -d src/core/persis
 
 # Ejecutando migraciones
 $ yarn migration:run -d src/core/persistence/config/data-source.ts
+
+# Revertir migracion
+$ yarn migration:revert -d src/core/persistence/config/data-source.ts
+
 ```
 
 ## 🌍 Puntos de acceso

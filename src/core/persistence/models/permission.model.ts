@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Role } from "./role.model";
+import { RoleEntity } from "./role.model";
 import { RolePermission } from "./role-permission.model";
 
 @Entity('permissions')
-export class Permission {
+export class PermissionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

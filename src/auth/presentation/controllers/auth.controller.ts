@@ -3,6 +3,7 @@ import { MediatorService } from '@core/common/services';
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { type Response } from 'express';
+import ms, { StringValue } from 'ms';
 
 @Controller('auth')
 export class AuthController {
@@ -24,11 +25,25 @@ export class AuthController {
     }
 
     @Get('oauth2/callback')
-    async oauth2Login(@Query('code') code: string, @Query('state') state: string) {
+    async oauth2Login(
+        @Query('code') code: string,
+        @Query('state') state: string,
+        @Res({ passthrough: true }) res: Response) {
         const result = await this.mediator.execute(new OAuth2Command(state, code));
         return result.matchOrThrow(
-            (value) => value,
-            HttpStatus.BAD_REQUEST // opcional, por defecto 400
+            (value) => {
+                // 1️⃣ Guardar JWT en cookie httpOnly
+                res.cookie('jwt', value.token, {
+                    httpOnly: false,
+                    secure: process.env.NODE_ENV === 'production', // solo https en prod
+                    sameSite: 'lax', // evitar CSRF básico
+                    maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue), // 1 día, ajustar según tu necesidad
+                });
+
+                // 2️⃣ Redirigir al front-end o dashboard
+                return res.redirect(value.redirect);
+            },
+            HttpStatus.BAD_REQUEST
         );
     }
 }

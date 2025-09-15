@@ -2,7 +2,7 @@ import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PostEntity } from "./post.model";
 
 @Entity('post_tags')
-export class PostTag {
+export class PostTagEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

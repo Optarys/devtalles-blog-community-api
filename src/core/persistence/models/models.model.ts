@@ -17,3 +17,8 @@ export enum PostStatus {
   PUBLISHED = "published",// Publicado y visible
   ARCHIVED = "archived"   // Archivado o deshabilitado
 }
+
+export enum ConfigurationType {
+  GENERAL = 'general',
+  REDIRENCTIONS = 'redirections'
+}
