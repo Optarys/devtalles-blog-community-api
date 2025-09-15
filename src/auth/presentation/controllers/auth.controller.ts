@@ -34,7 +34,7 @@ export class AuthController {
             (value) => {
                 // 1️⃣ Guardar JWT en cookie httpOnly
                 res.cookie('jwt', value.token, {
-                    httpOnly: true,
+                    httpOnly: false,
                     secure: process.env.NODE_ENV === 'production', // solo https en prod
                     sameSite: 'lax', // evitar CSRF básico
                     maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue), // 1 día, ajustar según tu necesidad
