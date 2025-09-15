@@ -15,11 +15,14 @@ export class PostType {
     @Field()
     slug: string;
 
-    @Field(() => CategoryType, {nullable: true})
+    @Field(() => CategoryType, { nullable: true })
     category?: CategoryType;
 
     @Field()
     content: string;
+
+    @Field()
+    summary: string;
 
     @Field()
     authorId: string;
@@ -27,12 +30,15 @@ export class PostType {
     @Field(() => GraphQLJSON, { nullable: true })
     seoMeta: any;
 
-    @Field()
-    publishedAt: Date;
+    @Field({ nullable: true })
+    publishedAt?: Date;
 
     @Field(() => [CommentType], { nullable: true })
     comments?: CommentType[];
 
     @Field(() => [TagType], { nullable: true })
     tags?: TagType[];
+
+    @Field(() =>  GraphQLJSON, { nullable: true })
+    banners: any
 }

@@ -5,7 +5,7 @@ import { UserIdentity } from "./user-identity.model";
 import { UserCredential } from "./user-credential.model";
 import { UserSession } from "./user-session.model";
 import { Comment } from "./comment.model";
-import { Post } from "./post.model";
+import { PostEntity } from "./post.model";
 
 @Entity('users')
 export class User {
@@ -63,8 +63,8 @@ export class User {
   })
   roles: Role[];
 
-  @OneToMany(() => Post, (post) => post.author)
-  posts: Post[];
+  @OneToMany(() => PostEntity, (post) => post.author)
+  posts: PostEntity[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];

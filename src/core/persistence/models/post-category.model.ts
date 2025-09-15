@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Post } from "./post.model";
+import { PostEntity } from "./post.model";
 
 @Entity('post_categories')
 export class PostCategory {
@@ -18,6 +18,6 @@ export class PostCategory {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @OneToMany(() => Post, (post) => post.category)
-  posts: Post[];
+  @OneToMany(() => PostEntity, (post) => post.category)
+  posts: PostEntity[];
 }

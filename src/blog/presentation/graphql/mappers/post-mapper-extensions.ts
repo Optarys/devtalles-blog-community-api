@@ -1,10 +1,11 @@
-import { Comment, Post, PostTag } from "@core/persistence/models";
+import { Comment, PostEntity, PostTag } from "@core/persistence/models";
 import { PostType } from "../types/post-type";
 import { CommentType } from "../types/comment-type";
 import { TagType } from "../types/tag-type";
 
 export class PostMapper {
-    static toGraphQL(entity: Post): PostType {
+    static toGraphQL(entity: PostEntity): PostType {
+        const endpoint = "https://fexkbggtblbjuixkpbzi.supabase.co/storage/v1/object/public/devtalles-blog-storage";
         return {
             id: entity.id,
             title: entity.title,
@@ -17,6 +18,11 @@ export class PostMapper {
                 }
                 : undefined,
             content: entity.content,
+            summary: entity.summary,
+            banners: entity.bannerImages?.map((key) => ({
+                key,
+                url: encodeURI(`${endpoint}/${key}`),
+            })),
             authorId: entity.author?.externalId,
             seoMeta: entity.seoMeta,
             publishedAt: entity.publishedAt,
@@ -46,7 +52,7 @@ export class PostMapper {
         };
     }
 
-    static toGraphQLList(entities: Post[]): PostType[] {
+    static toGraphQLList(entities: PostEntity[]): PostType[] {
         return entities.map((e) => this.toGraphQL(e));
     }
 }

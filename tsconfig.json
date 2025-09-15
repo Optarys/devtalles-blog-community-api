@@ -40,6 +40,9 @@
       "@blog/presentation/*": [
         "src/blog/presentation/*"
       ],
+      "@blog/domain/*": [
+        "src/blog/domain/*"
+      ],
       "@core/*": [
         "src/core/*"
       ]

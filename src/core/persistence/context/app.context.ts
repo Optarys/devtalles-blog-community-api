@@ -10,7 +10,7 @@ import {
     AuthProvider,
     UserIdentity,
     PostCategory,
-    Post,
+    PostEntity,
     PostTag,
     Comment,
     UserSession,
@@ -20,6 +20,9 @@ import {
 export class AppContext {
     constructor(private readonly dataSource: DataSource) { }
 
+    get context(): DataSource {
+        return this.dataSource;
+    }
     /* -------------------- GETTERS -------------------- */
     get roles(): Repository<Role> {
         return this.dataSource.getRepository(Role);
@@ -53,8 +56,8 @@ export class AppContext {
         return this.dataSource.getRepository(PostCategory);
     }
 
-    get posts(): Repository<Post> {
-        return this.dataSource.getRepository(Post);
+    get posts(): Repository<PostEntity> {
+        return this.dataSource.getRepository(PostEntity);
     }
 
     get postTags(): Repository<PostTag> {

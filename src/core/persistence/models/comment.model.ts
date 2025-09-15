@@ -1,15 +1,15 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.model";
-import { Post } from "./post.model";
+import { PostEntity } from "./post.model";
 
 @Entity('comments')
 export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => PostEntity, (post) => post.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
-  post: Post;
+  post: PostEntity;
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })

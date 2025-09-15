@@ -38,11 +38,13 @@ type PostType {
   slug: String!
   category: CategoryType
   content: String!
+  summary: String!
   authorId: String!
   seoMeta: JSON
-  publishedAt: DateTime!
+  publishedAt: DateTime
   comments: [CommentType!]
   tags: [TagType]
+  banners: JSON
 }
 
 """

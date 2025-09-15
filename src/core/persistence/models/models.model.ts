@@ -11,3 +11,9 @@ export enum OAuthProvider {
   GITHUB = 'github',
   OTHER = 'other',
 }
+
+export enum PostStatus {
+  DRAFT = "draft",        // Borrador, no publicado
+  PUBLISHED = "published",// Publicado y visible
+  ARCHIVED = "archived"   // Archivado o deshabilitado
+}
