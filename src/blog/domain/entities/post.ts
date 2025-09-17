@@ -53,7 +53,7 @@ export class Post extends AggregateRoot {
   }
 
   // Fábrica para crear un nuevo Post
-  static createNew(title: string, summary: string, content: string, authorId: string, category: string, status: string = 'draft'): Post {
+  static create(title: string, summary: string, content: string, authorId: string, category: string, status: string = 'draft'): Post {
     const slug = Slug.create(title);
     const post = new Post(title, slug, content, summary, authorId, new Category(category), status);
 

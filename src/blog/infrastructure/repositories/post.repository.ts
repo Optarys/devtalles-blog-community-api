@@ -31,7 +31,7 @@ export class PostRepository {
             }
             entity.category = category;
 
-            const author = await manager.findOneBy(this.context.postAuthor.target, {
+            const author = await manager.findOneBy(this.context.users.target, {
                 externalId: post.getAuthorId(),
             });
 
@@ -103,7 +103,7 @@ export class PostRepository {
 
             // 4️⃣ Autor (si cambió)
             if (post.getAuthorId()) {
-                const author = await manager.findOneBy(this.context.postAuthor.target, {
+                const author = await manager.findOneBy(this.context.users.target, {
                     externalId: post.getAuthorId(),
                 });
                 if (!author) {
@@ -144,6 +144,22 @@ export class PostRepository {
 
             return post;
         });
+    }
+
+    async findById(id: number): Promise<PostEntity | null> {
+        const entity = await this.context.posts.findOne({
+            where: { id },
+            relations: ["category", "author", "tags"],
+        });
+        return entity
+    }
+
+    async findBySlug(slug: string): Promise<PostEntity | null> {
+        const entity = await this.context.posts.findOne({
+            where: { slug },
+            relations: ["category", "author", "tags"],
+        });
+        return entity;
     }
 
 }

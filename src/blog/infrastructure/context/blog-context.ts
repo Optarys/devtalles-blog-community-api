@@ -28,7 +28,7 @@ export class BlogContext {
         return this.context.postTags;
     }
 
-    get postAuthor(): Repository<UserEntity> {
+    get users(): Repository<UserEntity> {
         return this.context.users;
     }
 }

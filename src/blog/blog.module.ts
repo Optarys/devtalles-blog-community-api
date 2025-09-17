@@ -9,6 +9,8 @@ import { PostRepository } from './infrastructure/repositories';
 import { PostsController } from './presentation/rest/post.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { CreatePostHandler } from './application/features/createPost/create-post.handler';
+import { AddCommentHandler } from './application/features/addComment/add-comment.handler';
+import { CommentController } from './presentation/rest/comment.controller';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { CreatePostHandler } from './application/features/createPost/create-post
     BlogContext,
     StorageService,
     PostRepository,
-    CreatePostHandler
+    CreatePostHandler,
+    AddCommentHandler
   ],
-  controllers: [PostsController]
+  controllers: [PostsController, CommentController]
 })
 export class BlogModule { }
