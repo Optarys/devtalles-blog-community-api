@@ -36,7 +36,7 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
         const tagEntities: Tag[] = (tags || []).map(name => new Tag(name));
 
         // Crear agregado
-        const post = Post.createNew(title, content, summary, authorId, category, status)
+        const post = Post.create(title, content, summary, authorId, category, status)
             .addTags(tagEntities)
             .addSeoMeta(seoMeta);
 

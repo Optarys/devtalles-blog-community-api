@@ -39,6 +39,7 @@ export class AuthController {
                     sameSite: 'lax', // evitar CSRF básico
                     maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue), // 1 día, ajustar según tu necesidad
                 });
+                console.log(value.token)
 
                 // 2️⃣ Redirigir al front-end o dashboard
                 return res.redirect(value.redirect);
