@@ -7,6 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigurationsService } from './common/services/configurations.service';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
     imports: [
@@ -17,9 +18,10 @@ import { ConfigurationsService } from './common/services/configurations.service'
             csrfPrevention: true,
             autoSchemaFile: join(process.cwd(), 'src/core/graphql/schema.gql')
         }),
+        CacheModule.register(),
         ORMConfiguration.register()
     ],
     providers: [MediatorService, AppContext, ConfigurationsService],
-    exports: [MediatorService, AppContext, ConfigurationsService],
+    exports: [MediatorService, AppContext, ConfigurationsService, CacheModule],
 })
 export class CoreModule { }

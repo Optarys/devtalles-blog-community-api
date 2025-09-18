@@ -11,6 +11,7 @@ import { AuthContext } from './infrastructure/context';
 import { OAuth2Strategy } from './application/contracts';
 import { OAuth2Repository } from './infrastructure/repositories';
 import { TestController } from './presentation/controllers/test.controller';
+import { ExchangeCodeHandler } from './application/features/exchange/exchange-code.handler';
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { TestController } from './presentation/controllers/test.controller';
         OAuthStrategyService,
         OAuth2CommandHandler,
         RedirectOauth2QueryHandler,
+        ExchangeCodeHandler,
         OAuth2Repository
     ],
     exports: [JwtModule]
