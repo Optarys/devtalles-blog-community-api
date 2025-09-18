@@ -10,7 +10,7 @@ export class TestController {
         res.cookie('jwt', 'mi-token-falso-123', {
             httpOnly: true,       // 🔒 no accesible por JS en el front
             secure: true,         // ⚠️ requiere HTTPS (para localhost ponlo en false si quieres probar)
-            sameSite: 'none',     // necesario si tu front está en otro dominio
+            sameSite: 'lax',     // necesario si tu front está en otro dominio
             maxAge: 1000 * 60 * 60, // 1 hora
         });
 
@@ -35,9 +35,10 @@ export class TestController {
 
         // Enviar cookie cross-site (frontend separado)
         res.cookie('jwt', token, {
-            httpOnly: false,
-            secure: false, // HTTPS obligatorio
-            sameSite: 'none', // Crucial para cross-site
+            httpOnly: true,
+            secure: true, // HTTPS obligatorio
+            sameSite: 'lax', // Crucial para cross-site
+            domain: '.onrender.com',
             maxAge: 60 * 60 * 1000, // 1 hora
         });
 
