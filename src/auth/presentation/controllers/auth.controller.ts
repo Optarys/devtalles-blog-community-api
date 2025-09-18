@@ -1,5 +1,6 @@
+import { ExchangeCodeCommand } from '@auth/application/features/exchange/exchange-code.command';
 import { OAuth2Command, RedirectOauth2Query } from '@auth/application/features/oauth2';
-import { MediatorService } from '@core/common/services';
+import { ConfigurationsService, MediatorService } from '@core/common/services';
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { type Response } from 'express';
@@ -9,6 +10,7 @@ import ms, { StringValue } from 'ms';
 export class AuthController {
     constructor(
         private readonly mediator: MediatorService,
+        private readonly config: ConfigurationsService
     ) { }
 
     @Get('oauth2/redirect')
@@ -31,22 +33,27 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response) {
         const result = await this.mediator.execute(new OAuth2Command(state, code));
         return result.matchOrThrow(
-            (value) => {
+            (value) => res.redirect(value.redirect),
+            HttpStatus.BAD_REQUEST
+        );
+    }
 
-                const { token, redirect } = value;
-                // 1️⃣ Guardar JWT en cookie httpOnly
-                res.cookie('jwt', token, {
-                    httpOnly: true,
-                    sameSite: "none",
-                    secure: true,
-                    maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue)
-                });
+    @Get('oauth2/exchange')
+    async oauth2Exchange(
+        @Query('code') code: string,
+        @Res({ passthrough: true }) res: Response
+    ) {
+        const result = await this.mediator.execute(new ExchangeCodeCommand(code));
 
+        return result.matchOrThrow(
+            async (value) => {
+                const { token } = value;
 
-                console.log(res)
+                // Guardar JWT en cookie HttpOnly cross-site
+                res.cookie('jwt', token, await this.config.getCookie());
 
-                // 2️⃣ Redirigir al front-end o dashboard
-                return res.redirect(redirect);
+                // Retornar algo mínimo al front
+                return res.status(HttpStatus.OK).json({ message: 'Token exchange exitoso ✅' });
             },
             HttpStatus.BAD_REQUEST
         );

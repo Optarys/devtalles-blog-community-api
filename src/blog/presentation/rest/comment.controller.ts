@@ -5,13 +5,15 @@ import {
     HttpCode,
     HttpStatus,
     Req,
-    UseGuards
+    UseGuards,
+    Res
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Result } from "@core/common/responses";
 import { AddCommentCommand, AddCommentDto } from "@blog/application/features/addComment";
 import { MediatorService } from "@core/common/services";
 import { JwtGuard } from "@core/common/guards";
+import { type Response } from "express";
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('access-token')
@@ -65,7 +67,8 @@ export class CommentController {
     })
     async addComment(
         @Body() dto: AddCommentDto,
-        @Req() req: any): Promise<Result<any>> {
+        @Res({passthrough: true}) res: Response,
+        @Req() req: any) {
         const user = req['user'].sub; // usuario autenticado
         const command = new AddCommentCommand(
             dto.content,
@@ -73,6 +76,11 @@ export class CommentController {
             dto.slugPost,
             dto.idPost,
         );
-        return this.mediator.execute(command);
+        const result = await this.mediator.execute(command);
+
+        result.match(
+            () => res.status(201).send({message: 'Comentario agregado'}),
+            (error, details) => res.status(400).send({ error, details })
+        )
     }
 }

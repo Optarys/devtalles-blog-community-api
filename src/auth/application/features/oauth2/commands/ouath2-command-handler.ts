@@ -1,12 +1,15 @@
 import { CommandHandler } from "@nestjs/cqrs";
-import { Logger } from "@nestjs/common";
+import { Inject, Logger } from "@nestjs/common";
 import { ICommandHandler } from "@core/common/handlers";
 import { OAuth2Command } from "./ouath2-command";
 import { Result } from "@core/common/responses";
 import { AuthContext } from "@auth/infrastructure/context";
 import { OAuthStrategyService } from "@auth/application/services";
 import { JwtService } from '@nestjs/jwt'
-import { OAuthProvider, RoleEntity, UserStatusEntity } from "@core/persistence/models";
+import { OAuthProvider, UserStatusEntity } from "@core/persistence/models";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import type { Cache } from "cache-manager";
+import { randomBytes } from "crypto";
 
 @CommandHandler(OAuth2Command)
 export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
@@ -15,16 +18,17 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
   constructor(
     private readonly context: AuthContext,
     private readonly strategyService: OAuthStrategyService,
-    private readonly jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
   async execute(command: OAuth2Command): Promise<Result<any>> {
     try {
+      const { provider, code } = command;
       // 1. Obtener la estrategia correspondiente
-      const strategy = this.strategyService.getStrategy(command.provider);
+      const strategy = this.strategyService.getStrategy(provider);
 
       // 2. Intercambiar el code por un accessToken
-      const { accessToken } = await strategy.exchangeCodeForToken(command.code);
+      const { accessToken } = await strategy.exchangeCodeForToken(code);
 
       // 3. Obtener el perfil del usuario del provider
       const profile = await strategy.getUserProfile(accessToken);
@@ -91,17 +95,11 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
         await this.context.userIdentities.save(newIdentity);
       }
 
-      // 6. Generar JWT interno
-      const jwt = await this.jwtService.signAsync({
-        sub: user.externalId,
-        username: user.username,
-        role: user.roles[0].name,
-        provider: command.provider,
-      });
+      // 6. Generar exchange code temporal
+      const exchangeCode = this.issueCode(user.externalId, provider)
 
       return Result.success({
-        redirect: await this.getUrlRedirection(),
-        token: jwt,
+        redirect: `${await this.getUrlRedirection()}?exchange=${exchangeCode}`,
       });
     } catch (err) {
       this.logger.error(err);
@@ -132,5 +130,16 @@ export class OAuth2CommandHandler implements ICommandHandler<OAuth2Command> {
 
     return value.redirections?.oauth2?.success?.url ?? null;
   }
+
+  issueCode(userId: string, provider: string, ttlSeconds = 300): string {
+    const code = randomBytes(32).toString('hex');
+    const expiresAt = Date.now() + ttlSeconds * 1000;
+
+    this.cacheManager.set(code, { userId, provider, expiresAt });
+
+    return code;
+  }
+
+
 
 }

@@ -50,12 +50,12 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
             comment.createdAt = new Date();
 
             // 4️⃣ Guardar en la BD
-            const saved = await this.context.comments.save(comment);
+            await this.context.comments.save(comment);
 
             this.logger.log(
-                `✅ Comment ${saved.id} added to Post ${post.id} by user ${authorId}`,
+                `✅ Comment  added to Post ${post.id} by user ${authorId}`,
             );
-            return Result.success(saved);
+            return Result.success();
         } catch (err) {
             this.logger.error("❌ Error adding comment", err.stack);
             return Result.failure(err.message ?? "Unexpected error adding comment");
