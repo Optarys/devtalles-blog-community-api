@@ -43,8 +43,8 @@ export class ExchangeCodeHandler implements ICommandHandler<ExchangeCodeCommand>
 
 
             return Result.success({
-                token: jwt, user: {
-                    id: user!.externalId,
+                token: jwt,
+                user: {
                     email: user!.email,
                     username: user!.username,
                     roles: user!.roles.map(r => r.name),

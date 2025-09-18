@@ -4,7 +4,6 @@ import { ConfigurationsService, MediatorService } from '@core/common/services';
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { type Response } from 'express';
-import ms, { StringValue } from 'ms';
 
 @Controller('auth')
 export class AuthController {
@@ -45,22 +44,23 @@ export class AuthController {
     ) {
         const result = await this.mediator.execute(new ExchangeCodeCommand(code));
 
-        return result.matchOrThrow(
-            async (value) => {
-                const { token, user } = value;
-
-                // Guardar JWT en cookie HttpOnly cross-site
-
-                res.cookie('jwt', token, await this.config.getCookie());
-
-                // Retornar algo mínimo al front
-                return res.status(HttpStatus.OK).json({
-                    message: 'Sesión iniciada',
-                    user,
-                });
-            },
+        // Espera que el matchOrThrow termine antes de continuar
+        const value = await result.matchOrThrow(
+            (v) => v,
             HttpStatus.BAD_REQUEST
         );
+
+        const { token, user } = value;
+
+        // Guardar JWT en cookie HttpOnly cross-site
+        const cookieOptions = await this.config.getCookie();
+        res.cookie('jwt', token, cookieOptions);
+
+        // Retornar info mínima del usuario
+        return res.status(HttpStatus.OK).json({
+            message: 'Sesión iniciada',
+            user,
+        });
     }
 }
 
