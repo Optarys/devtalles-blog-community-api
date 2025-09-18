@@ -71,8 +71,6 @@ export class DiscordStrategy extends OAuth2Strategy {
 
         const profile = await res.json();
 
-        console.log(profile)
-
         return {
             id: profile.id,
             email: profile.email,

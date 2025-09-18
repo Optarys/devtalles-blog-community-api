@@ -32,7 +32,7 @@ export class ExchangeCodeHandler implements ICommandHandler<ExchangeCodeCommand>
             const user = await this.context.users.findOneBy({
                 externalId: data.user
             })
-            
+
             // 6. Generar JWT interno
             const jwt = await this.jwtService.signAsync({
                 sub: user!.externalId,
@@ -42,7 +42,14 @@ export class ExchangeCodeHandler implements ICommandHandler<ExchangeCodeCommand>
             });
 
 
-            return Result.success({ token: jwt });
+            return Result.success({
+                token: jwt, user: {
+                    id: user!.externalId,
+                    email: user!.email,
+                    username: user!.username,
+                    roles: user!.roles.map(r => r.name),
+                },
+            });
         } catch (err) {
             this.logger.error(err);
             return Result.failure("Error en el intercambio", err);

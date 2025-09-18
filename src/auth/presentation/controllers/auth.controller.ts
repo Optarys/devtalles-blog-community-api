@@ -47,13 +47,17 @@ export class AuthController {
 
         return result.matchOrThrow(
             async (value) => {
-                const { token } = value;
+                const { token, user } = value;
 
                 // Guardar JWT en cookie HttpOnly cross-site
+
                 res.cookie('jwt', token, await this.config.getCookie());
 
                 // Retornar algo mínimo al front
-                return res.status(HttpStatus.OK).json({ message: 'Token exchange exitoso ✅' });
+                return res.status(HttpStatus.OK).json({
+                    message: 'Sesión iniciada',
+                    user,
+                });
             },
             HttpStatus.BAD_REQUEST
         );

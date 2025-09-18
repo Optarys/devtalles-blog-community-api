@@ -87,9 +87,20 @@ export class GitHubStrategy extends OAuth2Strategy {
             });
 
             if (emailResponse.ok) {
-                const emails = await emailResponse.json();
-                const primary = emails.find((e: any) => e.primary);
-                email = primary?.email ?? emails[0]?.email;
+                const emails: Array<{ email: string; primary: boolean; verified: boolean }> =
+                    await emailResponse.json();
+                    console.log(emails)
+
+                // Busca el primario y verificado
+                const primary = emails.find((e) => e.primary && e.verified);
+
+                if (primary) {
+                    email = primary.email;
+                } else {
+                    // fallback: el primer email verificado
+                    const verified = emails.find((e) => e.verified);
+                    email = verified?.email ?? emails[0]?.email;
+                }
             } else {
                 this.logger.warn("Could not fetch GitHub emails");
             }
