@@ -32,14 +32,18 @@ export class AuthController {
         const result = await this.mediator.execute(new OAuth2Command(state, code));
         return result.matchOrThrow(
             (value) => {
+
+                const { token, redirect } = value;
                 // 1️⃣ Guardar JWT en cookie httpOnly
-                res.cookie('jwt', value.token, {
-                    httpOnly: false,
-                    secure: process.env.NODE_ENV === 'production', // solo https en prod
-                    sameSite: 'lax', // evitar CSRF básico
-                    maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue), // 1 día, ajustar según tu necesidad
+                res.cookie('jwt', token, {
+                    httpOnly: true,
+                    sameSite: "none",
+                    secure: true,
+                    maxAge: ms(process.env.COOCKIE_EXPIRTATION_TIME as StringValue)
                 });
-                console.log(value.token)
+
+
+                console.log(res)
 
                 // 2️⃣ Redirigir al front-end o dashboard
                 return res.redirect(value.redirect);
