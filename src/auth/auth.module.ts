@@ -10,6 +10,7 @@ import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/
 import { AuthContext } from './infrastructure/context';
 import { OAuth2Strategy } from './application/contracts';
 import { OAuth2Repository } from './infrastructure/repositories';
+import { TestController } from './presentation/controllers/test.controller';
 
 @Module({
     imports: [
@@ -27,7 +28,7 @@ import { OAuth2Repository } from './infrastructure/repositories';
             }),
         }),
     ],
-    controllers: [AuthController],
+    controllers: [AuthController, TestController],
     providers: [
         AuthContext,
         GoogleStrategy,

@@ -46,7 +46,7 @@ export class AuthController {
                 console.log(res)
 
                 // 2️⃣ Redirigir al front-end o dashboard
-                return res.redirect(value.redirect);
+                return res.redirect(redirect);
             },
             HttpStatus.BAD_REQUEST
         );
