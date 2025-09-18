@@ -6,6 +6,7 @@ import { AppContext } from './persistence/context/app.context';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { ConfigurationsService } from './common/services/configurations.service';
 
 @Module({
     imports: [
@@ -18,7 +19,7 @@ import { join } from 'path';
         }),
         ORMConfiguration.register()
     ],
-    providers: [MediatorService, AppContext],
-    exports: [MediatorService, AppContext],
+    providers: [MediatorService, AppContext, ConfigurationsService],
+    exports: [MediatorService, AppContext, ConfigurationsService],
 })
 export class CoreModule { }

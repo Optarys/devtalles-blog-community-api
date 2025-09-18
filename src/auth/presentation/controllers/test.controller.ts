@@ -1,10 +1,11 @@
+import { ConfigurationsService } from '@core/common/services';
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { type Response } from 'express';
 
 @Controller('test')
 export class TestController {
-    constructor(private jwt: JwtService) { }
+    constructor(private jwt: JwtService, private config: ConfigurationsService) { }
     @Get('set-cookie')
     setCookie(@Res({ passthrough: true }) res: Response) {
         res.cookie('jwt', 'mi-token-falso-123', {
@@ -29,18 +30,13 @@ export class TestController {
     }
 
     @Get('login-test')
-    loginTest(@Res({ passthrough: true }) res: Response) {
+    async loginTest(@Res({ passthrough: true }) res: Response) {
         // Genera un JWT de prueba
         const token = this.jwt.sign({ user: 'kevin', role: 'reader' });
 
         // Enviar cookie cross-site (frontend separado)
-        res.cookie('jwt', token, {
-            httpOnly: false,
-            secure: false, // HTTPS obligatorio
-            sameSite: 'none', // Crucial para cross-site
-            // domain: '.onrender.com',
-            maxAge: 60 * 60 * 1000, // 1 hora
-        });
+
+        res.cookie('jwt', token, await this.config.getCookie());
 
         return { message: 'Cookie enviada ✅' };
     }
