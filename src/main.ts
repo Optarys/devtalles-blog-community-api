@@ -4,6 +4,7 @@ import { ConsoleLogger, INestApplication, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import basicAuth from 'express-basic-auth';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +13,19 @@ async function bootstrap() {
       logLevels: ['log', 'error', 'warn', 'verbose'],
     }),
   });
+
+   app.enableCors({
+    origin: [
+      'http://localhost:3000',                // 🔹 local dev
+      'https://symmetrical-bassoon-7qp667v7xwh7ww.github.dev',     // 🔹 Codespaces
+      'https://devtalles-blog-community-web.onrender.com',   // 🔹 producción
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // 🔑 permite cookies y auth headers
+  });
+
+  app.use(cookieParser());
 
   useSwagger(app);
 

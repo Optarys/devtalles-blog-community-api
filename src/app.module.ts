@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
 import { AuthModule } from './auth';
 import { BlogModule } from './blog/blog.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { BlogModule } from './blog/blog.module';
     CoreModule,
     AuthModule,
     BlogModule,
+    AdminModule,
 
   ]
 })
