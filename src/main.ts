@@ -14,16 +14,15 @@ async function bootstrap() {
     }),
   });
 
-   app.enableCors({
-    origin: [
-      'http://localhost:3000',                // 🔹 local dev
-      'https://symmetrical-bassoon-7qp667v7xwh7ww.github.dev',     // 🔹 Codespaces
-      'https://devtalles-blog-community-web.onrender.com', 
-      'https://dev.to'  // 🔹 producción
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // 🔑 permite cookies y auth headers
+  const config = app.get(ConfigService);
+
+  const origins = config.get<string>('CORS_ORIGINS')?.split(',') ?? [];
+
+  app.enableCors({
+    origin: origins,
+    methods: config.get<string>('CORS_METHODS') ?? 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: config.get<string>('CORS_ALLOWED_HEADERS') ?? 'Content-Type,Authorization',
+    credentials: config.get<string>('CORS_CREDENTIALS') === 'true',
   });
 
   app.use(cookieParser());
