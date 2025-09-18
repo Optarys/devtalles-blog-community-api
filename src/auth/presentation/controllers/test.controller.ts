@@ -35,10 +35,10 @@ export class TestController {
 
         // Enviar cookie cross-site (frontend separado)
         res.cookie('jwt', token, {
-            httpOnly: true,
-            secure: true, // HTTPS obligatorio
-            sameSite: 'lax', // Crucial para cross-site
-            domain: '.onrender.com',
+            httpOnly: false,
+            secure: false, // HTTPS obligatorio
+            sameSite: 'none', // Crucial para cross-site
+            // domain: '.onrender.com',
             maxAge: 60 * 60 * 1000, // 1 hora
         });
 
