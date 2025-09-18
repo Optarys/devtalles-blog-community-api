@@ -11,7 +11,7 @@ export class TestController {
         res.cookie('jwt', 'mi-token-falso-123', {
             httpOnly: true,       // 🔒 no accesible por JS en el front
             secure: true,         // ⚠️ requiere HTTPS (para localhost ponlo en false si quieres probar)
-            sameSite: 'none',     // necesario si tu front está en otro dominio
+            sameSite: 'lax',     // necesario si tu front está en otro dominio
             maxAge: 1000 * 60 * 60, // 1 hora
         });
 
@@ -35,6 +35,7 @@ export class TestController {
         const token = this.jwt.sign({ user: 'kevin', role: 'reader' });
 
         // Enviar cookie cross-site (frontend separado)
+
         res.cookie('jwt', token, await this.config.getCookie());
 
         return { message: 'Cookie enviada ✅' };
