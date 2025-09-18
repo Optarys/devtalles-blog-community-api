@@ -18,7 +18,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',                // 🔹 local dev
       'https://symmetrical-bassoon-7qp667v7xwh7ww.github.dev',     // 🔹 Codespaces
-      'https://devtalles-blog-community-web.onrender.com',   // 🔹 producción
+      'https://devtalles-blog-community-web.onrender.com', 
+      'https://dev.to'  // 🔹 producción
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
