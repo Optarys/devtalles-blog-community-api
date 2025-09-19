@@ -57,7 +57,7 @@ export class AuthController {
         res.cookie('jwt', token, cookieOptions);
 
         // Retornar info mínima del usuario
-        return res.status(HttpStatus.OK).json({
+        return res.status(HttpStatus.OK).send({
             message: 'Sesión iniciada',
             user,
         });
