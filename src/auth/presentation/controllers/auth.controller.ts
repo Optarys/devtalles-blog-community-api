@@ -57,10 +57,10 @@ export class AuthController {
         res.cookie('jwt', token, cookieOptions);
 
         // Retornar info mínima del usuario
-        return {
-            message: 'Sesión iniciada',
-            user,
-        };
+        //return {
+          //  message: 'Sesión iniciada',
+            //user,
+        //};
     }
 }
 
