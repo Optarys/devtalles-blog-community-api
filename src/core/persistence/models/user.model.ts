@@ -4,8 +4,9 @@ import { RoleEntity } from "./role.model";
 import { UserIdentityEntity } from "./user-identity.model";
 import { UserCredentialEntity } from "./user-credential.model";
 import { UserSessionEntity } from "./user-session.model";
-import { CommentEntity } from "./comment.model";
+import { PostCommentEntity } from "./post_comment.model";
 import { PostEntity } from "./post.model";
+import { PostSavedEntity } from "./post_saved.model";
 
 @Entity('users')
 export class UserEntity {
@@ -30,7 +31,7 @@ export class UserEntity {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => UserStatusEntity, (status) => status.users, { nullable: false})
+  @ManyToOne(() => UserStatusEntity, (status) => status.users, { nullable: false })
   @JoinColumn({ name: 'status_id' })
   status: UserStatusEntity;
 
@@ -55,21 +56,24 @@ export class UserEntity {
   @OneToMany(() => UserIdentityEntity, (identity) => identity.user)
   identities: UserIdentityEntity[];
 
-  @ManyToMany(() => RoleEntity, (role) => role.users, {eager: true})
+  @ManyToMany(() => RoleEntity, (role) => role.users, { eager: true })
   @JoinTable({
     name: 'user_roles',
     joinColumn: { name: 'user_id' },
     inverseJoinColumn: { name: 'role_id' },
-    
+
   })
   roles: RoleEntity[];
 
   @OneToMany(() => PostEntity, (post) => post.author)
   posts: PostEntity[];
 
-  @OneToMany(() => CommentEntity, (comment) => comment.user)
-  comments: CommentEntity[];
+  @OneToMany(() => PostCommentEntity, (comment) => comment.user)
+  comments: PostCommentEntity[];
 
   @OneToMany(() => UserSessionEntity, (session) => session.user)
   sessions: UserSessionEntity[];
+
+  @OneToMany(() => PostSavedEntity, saved => saved.user)
+  savedPosts: PostSavedEntity[];
 }

@@ -4,6 +4,7 @@
 
 """Representa el comentario de una publicación"""
 type CommentType {
+  id: Float!
   authorName: String!
   authorEmail: String!
   content: String!

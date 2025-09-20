@@ -1,16 +1,25 @@
 import { Module } from '@nestjs/common';
-import { BlogResolver } from './presentation/graphql/blog.resolver';
+import { JwtModule } from '@nestjs/jwt';
 import { PostsService } from './application/services/posts.service';
 import { BlogContext } from './infrastructure/context';
 import { CoreModule } from '@core/core.module';
 import { StorageService } from './application/services';
 import { S3StorageConfiguration } from './infrastructure/storage/s3-storage.configuration';
 import { PostRepository } from './infrastructure/repositories';
-import { PostsController } from './presentation/rest/post.controller';
-import { JwtModule } from '@nestjs/jwt';
+
+//Handlers
 import { CreatePostHandler } from './application/features/createPost/create-post.handler';
 import { AddCommentHandler } from './application/features/addComment/add-comment.handler';
+import { DeleteCommentHandler } from './application/features/deleteComment/delete-comment.handler';
+
+//Controllers
+import { PostsController } from './presentation/rest/post.controller';
 import { CommentController } from './presentation/rest/comment.controller';
+
+//Graphql
+import { BlogResolver } from './presentation/graphql/blog.resolver';
+import { TogglePostHandler } from './application/features/togglePost/toggle-post.handler';
+import { SavePostHandler } from './application/features/savePost/save-post.handler';
 
 @Module({
   imports: [
@@ -25,7 +34,10 @@ import { CommentController } from './presentation/rest/comment.controller';
     StorageService,
     PostRepository,
     CreatePostHandler,
-    AddCommentHandler
+    AddCommentHandler,
+    DeleteCommentHandler,
+    TogglePostHandler,
+    SavePostHandler
   ],
   controllers: [PostsController, CommentController]
 })

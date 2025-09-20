@@ -12,7 +12,7 @@ import {
     PostCategoryEntity,
     PostEntity,
     PostTagEntity,
-    CommentEntity,
+    PostCommentEntity,
     UserSessionEntity,
 } from "@core/persistence/models";
 import { ConfigurationModel } from "../models/config.model";
@@ -69,8 +69,8 @@ export class AppContext {
         return this.dataSource.getRepository(PostTagEntity);
     }
 
-    get comments(): Repository<CommentEntity> {
-        return this.dataSource.getRepository(CommentEntity);
+    get postComments(): Repository<PostCommentEntity> {
+        return this.dataSource.getRepository(PostCommentEntity);
     }
 
     get userSessions(): Repository<UserSessionEntity> {

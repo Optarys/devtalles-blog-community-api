@@ -5,8 +5,8 @@ import {
 import { 
   IsNotEmpty, 
   IsString, 
-  IsOptional, 
-  IsUUID
+  IsOptional,
+  IsInt
 } from "class-validator";
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, registerDecorator, ValidationOptions } from "class-validator";
 
@@ -56,8 +56,8 @@ export class AddCommentDto {
     example: "42",
   })
   @IsOptional()
-  @IsString()
-  idPost?: string;
+  @IsInt({message: "El valor debe ser un numero entero"})
+  postId?: number;
 
   @ApiPropertyOptional({
     description: "Slug del Post (opcional si se usa idPost)",

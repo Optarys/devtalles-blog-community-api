@@ -6,7 +6,8 @@ import {
     HttpStatus,
     Req,
     UseGuards,
-    Res
+    Res,
+    Delete
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Result } from "@core/common/responses";
@@ -14,6 +15,7 @@ import { AddCommentCommand, AddCommentDto } from "@blog/application/features/add
 import { MediatorService } from "@core/common/services";
 import { JwtGuard } from "@core/common/guards";
 import { type Response } from "express";
+import { DeleteCommentCommand, DeleteCommentDto } from "@blog/application/features/deleteComment";
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('access-token')
@@ -67,20 +69,55 @@ export class CommentController {
     })
     async addComment(
         @Body() dto: AddCommentDto,
-        @Res({passthrough: true}) res: Response,
+        @Res({ passthrough: true }) res: Response,
         @Req() req: any) {
         const user = req['user'].sub; // usuario autenticado
         const command = new AddCommentCommand(
             dto.content,
             user,
             dto.slugPost,
-            dto.idPost,
+            dto.postId,
         );
         const result = await this.mediator.execute(command);
 
         result.match(
-            () => res.status(201).send({message: 'Comentario agregado'}),
+            () => res.status(201).send({ message: 'Comentario agregado' }),
             (error, details) => res.status(400).send({ error, details })
         )
+    }
+
+
+    @Delete()
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Elimina un comentario (soft delete con moderación)' })
+    @ApiResponse({
+        status: 200,
+        description: 'Comentario eliminado correctamente',
+        schema: {
+            example: {
+                success: true,
+                message: 'Comentario eliminado correctamente',
+                commentId: 123,
+            },
+        },
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Comentario no encontrado',
+        schema: {
+            example: {
+                statusCode: 404,
+                message: 'Comentario con id 999 no encontrado',
+                error: 'Not Found',
+            },
+        },
+    })
+    async deleteComment(
+        @Body() dto: DeleteCommentDto, 
+        @Req() req: any) {
+        const user = req['user'].sub; // usuario autenticado
+        return this.mediator.execute(
+            new DeleteCommentCommand(user, dto.commentId),
+        );
     }
 }

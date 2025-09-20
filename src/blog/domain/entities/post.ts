@@ -2,7 +2,7 @@ import { AggregateRoot } from "../primitives/aggregate-root";
 import { Slug } from "../value-objects/slug";
 import { Category } from "./category";
 import { Tag } from "./tag";
-import { CommentEntity } from "@core/persistence/models";
+import { PostCommentEntity } from "@core/persistence/models";
 import { PostCreatedDomainEvent } from "../events/post-created.event";
 import { PostPublishedDomainEvent } from "../events/post-published.event";
 import { PostCommentedDomainEvent } from "../events/post-commented.event";
@@ -19,7 +19,7 @@ export class Post extends AggregateRoot {
   private publishedAt?: Date;
   private category: Category;
   private tags: Tag[] = [];
-  private comments: CommentEntity[] = [];
+  private comments: PostCommentEntity[] = [];
   private seoMeta?: Record<string, any>;
   private bannerImages: string[] = [];
 
@@ -32,7 +32,7 @@ export class Post extends AggregateRoot {
     category: Category,
     status: string,
     tags: Tag[] = [],
-    comments: CommentEntity[] = [],
+    comments: PostCommentEntity[] = [],
     seoMeta?: Record<string, any>,
     publishedAt?: Date,
     bannerImages: string[] = []
@@ -101,7 +101,7 @@ export class Post extends AggregateRoot {
     return this;
   }
 
-  addComment(comment: CommentEntity) {
+  addComment(comment: PostCommentEntity) {
     this.comments.push(comment);
     this.addDomainEvent(new PostCommentedDomainEvent(this.id, comment));
     return this;
@@ -147,7 +147,7 @@ export class Post extends AggregateRoot {
     return [...this.tags]; // copia defensiva
   }
 
-  getComments(): CommentEntity[] {
+  getComments(): PostCommentEntity[] {
     return [...this.comments]; // copia defensiva
   }
 

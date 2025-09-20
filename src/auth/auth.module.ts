@@ -10,7 +10,6 @@ import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/
 import { AuthContext } from './infrastructure/context';
 import { OAuth2Strategy } from './application/contracts';
 import { OAuth2Repository } from './infrastructure/repositories';
-import { TestController } from './presentation/controllers/test.controller';
 import { ExchangeCodeHandler } from './application/features/exchange/exchange-code.handler';
 
 @Module({
@@ -29,7 +28,7 @@ import { ExchangeCodeHandler } from './application/features/exchange/exchange-co
             }),
         }),
     ],
-    controllers: [AuthController, TestController],
+    controllers: [AuthController],
     providers: [
         AuthContext,
         GoogleStrategy,

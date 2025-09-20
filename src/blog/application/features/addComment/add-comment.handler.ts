@@ -4,7 +4,7 @@ import { Result } from "@core/common/responses";
 import { Logger, NotFoundException } from "@nestjs/common";
 import { CommandHandler } from "@nestjs/cqrs";
 import { BlogContext } from "@blog/infrastructure/context";
-import { CommentEntity } from "@core/persistence/models";
+import { PostCommentEntity } from "@core/persistence/models";
 
 @CommandHandler(AddCommentCommand)
 export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
@@ -14,13 +14,13 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
     constructor(private readonly context: BlogContext) { }
 
     async execute(command: AddCommentCommand): Promise<Result<any>> {
-        const { authorId, content, idPost, slugPost } = command;
+        const { authorId, content, postId: idPost, postSlug: slugPost } = command;
 
         try {
             // 1️⃣ Buscar el post por id o slug
             const post = idPost
                 ? await this.context.posts.findOne({
-                    where: { id: Number.parseInt(idPost) },
+                    where: { id: idPost },
                     relations: ["author", "category", "tags", "comments"],
                 })
                 : await this.context.posts.findOne({
@@ -41,22 +41,21 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
             }
 
             // 3️⃣ Crear el comentario
-            const comment = new CommentEntity();
-            comment.authorName = user.username;
-            comment.authorEmail = user.email ?? user.externalId;
+            const comment = new PostCommentEntity();
             comment.content = content;
             comment.user = user;
             comment.post = post;
             comment.createdAt = new Date();
 
             // 4️⃣ Guardar en la BD
-            await this.context.comments.save(comment);
+            await this.context.postComments.save(comment);
 
             this.logger.log(
                 `✅ Comment  added to Post ${post.id} by user ${authorId}`,
             );
             return Result.success();
         } catch (err) {
+            console.log(err)
             this.logger.error("❌ Error adding comment", err.stack);
             return Result.failure(err.message ?? "Unexpected error adding comment");
         }

@@ -2,8 +2,8 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToO
 import { UserEntity } from "./user.model";
 import { PostEntity } from "./post.model";
 
-@Entity('comments')
-export class CommentEntity {
+@Entity('post_comments')
+export class PostCommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,12 +14,6 @@ export class CommentEntity {
   @ManyToOne(() => UserEntity, (user) => user.comments, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
-
-  @Column({ name: 'author_name', length: 150, nullable: true })
-  authorName: string;
-
-  @Column({ name: 'author_email', length: 255, nullable: true })
-  authorEmail: string;
 
   @Column({ type: 'text' })
   content: string;

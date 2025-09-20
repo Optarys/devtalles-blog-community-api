@@ -41,7 +41,7 @@ async function useSwagger(app: INestApplication<any>) {
   const swaggerPass = configService.get<string>('SWAGGER_PASS', '12345');
 
   app.use(
-    ['/swagger', '/swagger-json'], // protege tanto UI como JSON
+    ['/swagger'], // protege tanto UI como JSON
     basicAuth({
       challenge: true,
       users: { [swaggerUser]: swaggerPass },

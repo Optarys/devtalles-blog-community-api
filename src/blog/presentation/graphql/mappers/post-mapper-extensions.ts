@@ -1,4 +1,4 @@
-import { CommentEntity, PostEntity, PostTagEntity } from "@core/persistence/models";
+import { PostCommentEntity, PostEntity, PostTagEntity } from "@core/persistence/models";
 import { PostType } from "../types/post-type";
 import { CommentType } from "../types/comment-type";
 import { TagType } from "../types/tag-type";
@@ -34,10 +34,11 @@ export class PostMapper {
 
 
     // Mapea un comentario
-    static commentToGraphQL(comment: CommentEntity): CommentType {
+    static commentToGraphQL(comment: PostCommentEntity): CommentType {
         return {
-            authorName: comment.authorName,
-            authorEmail: comment.authorEmail,
+            id: comment.id,
+            authorName: comment.user.username,
+            authorEmail: comment.user.email,
             content: comment.content,
             isModerated: comment.isModerated,
             createdAt: comment.createdAt,

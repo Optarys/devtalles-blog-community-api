@@ -1,13 +1,14 @@
-// posts.controller.ts
-import { Controller, Post, Body, UseInterceptors, UploadedFiles, Logger, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFiles, Logger, UseGuards, Req, Patch, HttpCode } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Result } from '@core/common/responses';
 import { CreatePostCommand, CreatePostDto } from '@blog/application/features/createPost';
 import { JwtGuard } from '@core/common/guards';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MediatorService } from '@core/common/services';
+import { TogglePostCommand, TogglePostDto } from '@blog/application/features/togglePost';
+import { SavePostCommand, SavePostDto } from '@blog/application/features/savePost';
 
-@ApiBearerAuth('access-token')
+@UseGuards(JwtGuard)
 @Controller('posts')
 export class PostsController {
     private readonly logger = new Logger(PostsController.name);
@@ -15,7 +16,6 @@ export class PostsController {
     constructor(private readonly mediator: MediatorService) { }
 
     @Post()
-    @UseGuards(JwtGuard)
     @UseInterceptors(FilesInterceptor('banners'))
     @ApiOperation({ summary: 'Crea un nuevo post' })
     @ApiConsumes('multipart/form-data')
@@ -45,7 +45,6 @@ export class PostsController {
         @UploadedFiles() banners: Express.Multer.File[],
         @Req() req: any, // request con user
     ): Promise<Result<any>> {
-        console.log(banners)
         const user = req['user'].sub; // usuario autenticado
         const command = new CreatePostCommand(
             body.title,
@@ -70,5 +69,50 @@ export class PostsController {
             this.logger.error('Error en createPost endpoint', error);
             return Result.failure('Error al crear post');
         }
+    }
+
+    @Patch('toggle')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Cambia el estado de un post (draft/published/archived)' })
+    @ApiResponse({
+        status: 200,
+        description: 'Post actualizado correctamente',
+        schema: {
+            example: {
+                success: true,
+                message: 'Post actualizado correctamente',
+                postId: 123,
+                slug: 'mi-post-de-prueba',
+                status: 'published',
+            },
+        },
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Post no encontrado',
+        schema: {
+            example: {
+                statusCode: 404,
+                message: 'Post 999 no encontrado',
+                error: 'Not Found',
+            },
+        },
+    })
+    async togglePost(@Body() dto: TogglePostDto) {
+        return this.mediator.execute(
+            new TogglePostCommand(dto.postId, dto.postSlug, dto.status),
+        );
+    }
+
+
+    @Post('save')
+    @ApiOperation({ summary: 'Guardar un post para el usuario' })
+    async savePost(
+        @Body() dto: SavePostDto,
+        @Req() req: any) {
+        const user = req['user'].sub; // usuario autenticado
+        return this.mediator.execute(
+            new SavePostCommand(user, Number(dto.postId), dto.postSlug),
+        );
     }
 }

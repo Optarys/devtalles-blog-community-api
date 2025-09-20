@@ -4,6 +4,9 @@ import { Field, ObjectType } from "@nestjs/graphql";
 export class CommentType {
 
     @Field()
+    id:number;
+    
+    @Field()
     authorName: string;
 
     @Field()

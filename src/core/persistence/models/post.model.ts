@@ -1,9 +1,10 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "./user.model";
-import { CommentEntity } from "./comment.model";
+import { PostCommentEntity } from "./post_comment.model";
 import { PostCategoryEntity } from "./post-category.model";
 import { PostTagEntity } from "./post-tag.model";
 import { PostStatus } from "./models.model";
+import { PostSavedEntity } from "./post_saved.model";
 
 @Entity('posts')
 export class PostEntity {
@@ -57,6 +58,9 @@ export class PostEntity {
   })
   tags: PostTagEntity[];
 
-  @OneToMany(() => CommentEntity, (comment) => comment.post)
-  comments: CommentEntity[];
+  @OneToMany(() => PostCommentEntity, (comment) => comment.post)
+  comments: PostCommentEntity[];
+
+  @OneToMany(() => PostSavedEntity, saved => saved.post)
+  savedPosts: PostSavedEntity[];
 }

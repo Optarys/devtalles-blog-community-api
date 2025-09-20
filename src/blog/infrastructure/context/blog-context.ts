@@ -1,5 +1,6 @@
 import { AppContext } from "@core/persistence/context/app.context";
-import { CommentEntity, PostEntity, PostCategoryEntity, PostTagEntity, UserEntity } from "@core/persistence/models";
+import { PostCommentEntity, PostEntity, PostCategoryEntity, PostTagEntity, UserEntity } from "@core/persistence/models";
+import { PostSavedEntity } from "@core/persistence/models/post_saved.model";
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 
@@ -12,12 +13,16 @@ export class BlogContext {
         return this.context.context;
     }
 
+    get postSaved() : Repository<PostSavedEntity>{
+        return this.postSaved;
+    }
+
     get posts(): Repository<PostEntity> {
         return this.context.posts;
     }
 
-    get comments(): Repository<CommentEntity> {
-        return this.context.comments;
+    get postComments(): Repository<PostCommentEntity> {
+        return this.context.postComments;
     }
 
     get postCategories(): Repository<PostCategoryEntity> {

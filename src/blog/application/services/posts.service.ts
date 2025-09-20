@@ -1,6 +1,6 @@
 import { BlogContext } from '@blog/infrastructure/context';
 import { Injectable } from '@nestjs/common';
-import { CommentEntity, PostEntity, PostCategoryEntity, PostTagEntity } from '@core/persistence/models';
+import { PostCommentEntity, PostEntity, PostCategoryEntity, PostTagEntity } from '@core/persistence/models';
 
 interface PostFilters {
     slug?: string;
@@ -38,9 +38,10 @@ export class PostsService {
     }
 
 
-    async findCommentsByPostId(postId: number): Promise<CommentEntity[]> {
-        return await this.context.comments
+    async findCommentsByPostId(postId: number): Promise<PostCommentEntity[]> {
+        return await this.context.postComments
             .createQueryBuilder('comment')
+            .leftJoinAndSelect('comment.user', 'user')
             .where('comment.post_id = :postId', { postId })
             .getMany();
     }

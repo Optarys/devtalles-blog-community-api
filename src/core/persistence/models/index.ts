@@ -10,5 +10,5 @@ export * from './user-identity.model';
 export * from './post-category.model';
 export * from './post.model';
 export * from './post-tag.model';
-export * from './comment.model';
+export * from './post_comment.model';
 export * from './user-session.model';
