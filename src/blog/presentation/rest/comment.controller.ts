@@ -11,7 +11,6 @@ import {
     Param
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
-import { Result } from "@core/common/responses";
 import { AddCommentCommand, AddCommentDto } from "@blog/application/features/addComment";
 import { MediatorService } from "@core/common/services";
 import { JwtGuard } from "@core/common/guards";

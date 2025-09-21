@@ -14,19 +14,18 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
     constructor(private readonly context: BlogContext) { }
 
     async execute(command: AddCommentCommand): Promise<Result<any>> {
-        const { authorId, content, postId: idPost } = command;
+        const { authorId, content, postId } = command;
 
         try {
-            // Buscar el post por id o slug
+            // Buscar el post por id
             const post =
                 await this.context.posts.findOne({
-                    where: { id: idPost },
-                    relations: ["author", "category", "tags", "comments"],
+                    where: { id: postId }
                 })
 
             if (!post) {
                 throw new NotFoundException(
-                    `Post not found (id: ${idPost})`,
+                    `Post not found (id: ${postId})`,
                 );
             }
 
@@ -35,6 +34,8 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
             if (!user) {
                 throw new NotFoundException(`User with externalId ${authorId} not found`);
             }
+
+            post.comments
 
             // 3️⃣ Crear el comentario
             const comment = new PostCommentEntity();

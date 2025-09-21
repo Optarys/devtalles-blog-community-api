@@ -49,7 +49,7 @@ export class AuthController {
         const cookieOptions = await this.config.getCookie();
         res.cookie('jwt', token, cookieOptions);
 
-        return result.getValue()
+        return user;
     }
 
     @Get('oauth2/redirect')
@@ -97,10 +97,7 @@ export class AuthController {
         res.cookie('jwt', token, cookieOptions);
 
         // Retornar info mínima del usuario
-        //return {
-        //  message: 'Sesión iniciada',
-        //user,
-        //};
+        return user;
     }
 }
 
