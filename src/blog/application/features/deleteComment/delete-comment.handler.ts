@@ -1,7 +1,7 @@
 import { ICommandHandler } from "@core/common/handlers";
 import { DeleteCommentCommand } from "./delete-comment.command";
 import { Result } from "@core/common/responses";
-import { Logger, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Logger, NotFoundException } from "@nestjs/common";
 import { BlogContext } from "@blog/infrastructure/context";
 import { CommandHandler } from "@nestjs/cqrs";
 
@@ -14,17 +14,23 @@ export class DeleteCommentHandler implements ICommandHandler<DeleteCommentComman
     async execute(command: DeleteCommentCommand): Promise<Result<any>> {
         const { authorId, commentId } = command;
 
-        const comment = await this.context.postComments.findOneBy({
-            id: commentId,
-            user: {
-                externalId: authorId
-            }
+        const comment = await this.context.postComments.findOne({
+            where: {
+                id: commentId
+            },
+            relations: ['user']
         });
 
         if (!comment) {
             throw new NotFoundException(
                 `Comentario con id ${commentId} no encontrado`,
             );
+        }
+
+        if (comment.user.externalId != authorId) {
+            throw new ForbiddenException(
+                `El Comentario no fue escrito por este usuario`,
+            )
         }
 
         comment.isModerated = true;

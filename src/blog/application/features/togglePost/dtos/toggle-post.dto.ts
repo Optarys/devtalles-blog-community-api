@@ -3,15 +3,6 @@ import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MinLength } from 'clas
 
 export class TogglePostDto {
   @ApiPropertyOptional({
-    description: 'Identificador único del post (opcional si se envía el slug)',
-    example: 123,
-  })
-  @IsOptional()
-  @IsInt({ message: 'El ID del post debe ser un número entero' })
-  @IsPositive({ message: 'El ID del post debe ser mayor que 0' })
-  postId?: number;
-
-  @ApiPropertyOptional({
     description: 'Slug único del post (opcional si se envía el ID)',
     example: 'mi-post-de-prueba',
   })

@@ -7,7 +7,8 @@ import {
     Req,
     UseGuards,
     Res,
-    Delete
+    Delete,
+    Param
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Result } from "@core/common/responses";
@@ -75,7 +76,6 @@ export class CommentController {
         const command = new AddCommentCommand(
             dto.content,
             user,
-            dto.slugPost,
             dto.postId,
         );
         const result = await this.mediator.execute(command);
@@ -87,7 +87,7 @@ export class CommentController {
     }
 
 
-    @Delete()
+    @Delete(":id")
     @HttpCode(200)
     @ApiOperation({ summary: 'Elimina un comentario (soft delete con moderación)' })
     @ApiResponse({
@@ -113,11 +113,11 @@ export class CommentController {
         },
     })
     async deleteComment(
-        @Body() dto: DeleteCommentDto, 
+        @Param("id") id: number,
         @Req() req: any) {
         const user = req['user'].sub; // usuario autenticado
         return this.mediator.execute(
-            new DeleteCommentCommand(user, dto.commentId),
+            new DeleteCommentCommand(user, id),
         );
     }
 }

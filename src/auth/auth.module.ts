@@ -9,8 +9,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OAuth2CommandHandler, RedirectOauth2QueryHandler } from './application/features/oauth2';
 import { AuthContext } from './infrastructure/context';
 import { OAuth2Strategy } from './application/contracts';
-import { OAuth2Repository } from './infrastructure/repositories';
 import { ExchangeCodeHandler } from './application/features/exchange/exchange-code.handler';
+import { AuthCredentialsHandler } from './application/features/credentials/auth-credentials.handler';
+import { SignupHandler } from './application/features/signup/signup.handler';
 
 @Module({
     imports: [
@@ -43,7 +44,8 @@ import { ExchangeCodeHandler } from './application/features/exchange/exchange-co
         OAuth2CommandHandler,
         RedirectOauth2QueryHandler,
         ExchangeCodeHandler,
-        OAuth2Repository
+        AuthCredentialsHandler,
+        SignupHandler
     ],
     exports: [JwtModule]
 })

@@ -16,6 +16,7 @@ import {
     UserSessionEntity,
 } from "@core/persistence/models";
 import { ConfigurationModel } from "../models/config.model";
+import { PostSavedEntity } from "../models/post_saved.model";
 
 @Injectable()
 export class AppContext {
@@ -75,5 +76,9 @@ export class AppContext {
 
     get userSessions(): Repository<UserSessionEntity> {
         return this.dataSource.getRepository(UserSessionEntity);
+    }
+
+    get postSaved() : Repository<PostSavedEntity>{
+        return this.dataSource.getRepository(PostSavedEntity);
     }
 }

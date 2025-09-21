@@ -46,11 +46,6 @@ export class AddCommentDto {
   @IsNotEmpty({ message: "El contenido del comentario no puede estar vacío" })
   content: string;
 
-  @ApiProperty({
-    description: "Identificador del autor (externalId del usuario)",
-    example: "9f8a3c92-1234-4f9d-8888-7b1c2b9f3e1d",
-  })
-
   @ApiPropertyOptional({
     description: "ID numérico del Post (opcional si se usa slugPost)",
     example: "42",
@@ -58,18 +53,4 @@ export class AddCommentDto {
   @IsOptional()
   @IsInt({message: "El valor debe ser un numero entero"})
   postId?: number;
-
-  @ApiPropertyOptional({
-    description: "Slug del Post (opcional si se usa idPost)",
-    example: "introduccion-a-nestjs",
-  })
-  @IsOptional()
-  @IsString()
-  slugPost?: string;
-
-  // Validación: al menos uno de los dos debe estar presente
-  @AtLeastOnePostRef({
-    message: "Debe proporcionar al menos idPost o slugPost",
-  })
-  _atLeastOne!: string;
 }

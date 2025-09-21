@@ -14,23 +14,19 @@ export class AddCommentHandler implements ICommandHandler<AddCommentCommand> {
     constructor(private readonly context: BlogContext) { }
 
     async execute(command: AddCommentCommand): Promise<Result<any>> {
-        const { authorId, content, postId: idPost, postSlug: slugPost } = command;
+        const { authorId, content, postId: idPost } = command;
 
         try {
-            // 1️⃣ Buscar el post por id o slug
-            const post = idPost
-                ? await this.context.posts.findOne({
+            // Buscar el post por id o slug
+            const post =
+                await this.context.posts.findOne({
                     where: { id: idPost },
                     relations: ["author", "category", "tags", "comments"],
                 })
-                : await this.context.posts.findOne({
-                    where: { slug: slugPost! },
-                    relations: ["author", "category", "tags", "comments"],
-                });
 
             if (!post) {
                 throw new NotFoundException(
-                    `Post not found (id: ${idPost}, slug: ${slugPost})`,
+                    `Post not found (id: ${idPost})`,
                 );
             }
 

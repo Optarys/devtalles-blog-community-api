@@ -14,7 +14,7 @@ export class BlogContext {
     }
 
     get postSaved() : Repository<PostSavedEntity>{
-        return this.postSaved;
+        return this.context.postSaved;
     }
 
     get posts(): Repository<PostEntity> {

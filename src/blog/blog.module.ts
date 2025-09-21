@@ -11,6 +11,9 @@ import { PostRepository } from './infrastructure/repositories';
 import { CreatePostHandler } from './application/features/createPost/create-post.handler';
 import { AddCommentHandler } from './application/features/addComment/add-comment.handler';
 import { DeleteCommentHandler } from './application/features/deleteComment/delete-comment.handler';
+import { TogglePostHandler } from './application/features/togglePost/toggle-post.handler';
+import { SavePostHandler } from './application/features/savePost/save-post.handler';
+import { EditPostHandler } from './application/features/editPost/edit-post.handler';
 
 //Controllers
 import { PostsController } from './presentation/rest/post.controller';
@@ -18,8 +21,7 @@ import { CommentController } from './presentation/rest/comment.controller';
 
 //Graphql
 import { BlogResolver } from './presentation/graphql/blog.resolver';
-import { TogglePostHandler } from './application/features/togglePost/toggle-post.handler';
-import { SavePostHandler } from './application/features/savePost/save-post.handler';
+
 
 @Module({
   imports: [
@@ -37,7 +39,8 @@ import { SavePostHandler } from './application/features/savePost/save-post.handl
     AddCommentHandler,
     DeleteCommentHandler,
     TogglePostHandler,
-    SavePostHandler
+    SavePostHandler,
+    EditPostHandler
   ],
   controllers: [PostsController, CommentController]
 })

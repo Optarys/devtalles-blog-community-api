@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFiles, Logger, UseGuards, Req, Patch, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFiles, Logger, UseGuards, Req, Patch, HttpCode, Param } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Result } from '@core/common/responses';
 import { CreatePostCommand, CreatePostDto } from '@blog/application/features/createPost';
@@ -7,6 +7,7 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger
 import { MediatorService } from '@core/common/services';
 import { TogglePostCommand, TogglePostDto } from '@blog/application/features/togglePost';
 import { SavePostCommand, SavePostDto } from '@blog/application/features/savePost';
+import { EditPostCommand, EditPostDto } from '@blog/application/features/editPost';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -37,7 +38,6 @@ export class PostsController {
             required: ['title', 'content', 'category'],
         },
     })
-
     @ApiResponse({ status: 201, description: 'Post creado correctamente.' })
     @ApiResponse({ status: 400, description: 'Datos inválidos.' })
     async createPost(
@@ -71,7 +71,40 @@ export class PostsController {
         }
     }
 
-    @Patch('toggle')
+
+    @Patch(":id")
+    @ApiOperation({ summary: "Editar un post existente" })
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({
+        description: "Datos para editar un post",
+        type: EditPostDto,
+    })
+    @ApiResponse({
+        status: 200,
+        description: "Post actualizado correctamente",
+    })
+    @UseInterceptors(FilesInterceptor("banners")) // maneja múltiples archivos
+    async editPost(
+        @Param("id") id: string,
+        @Body() dto: EditPostDto,
+        @UploadedFiles() banners: Express.Multer.File[],
+    ) {
+        const command = new EditPostCommand(
+            id,
+            dto.title,
+            dto.content,
+            dto.summary,
+            dto.category,
+            banners,
+            dto.tags,
+            dto.seoMeta,
+        );
+
+        return this.mediator.execute(command);
+    }
+
+
+    @Patch(':id/toggle-status')
     @HttpCode(200)
     @ApiOperation({ summary: 'Cambia el estado de un post (draft/published/archived)' })
     @ApiResponse({
@@ -98,21 +131,23 @@ export class PostsController {
             },
         },
     })
-    async togglePost(@Body() dto: TogglePostDto) {
+    async togglePost(
+        @Body() dto: TogglePostDto,
+        @Param("id") id: number) {
         return this.mediator.execute(
-            new TogglePostCommand(dto.postId, dto.postSlug, dto.status),
+            new TogglePostCommand(id, dto.status),
         );
     }
 
 
-    @Post('save')
+    @Post(':id/save')
     @ApiOperation({ summary: 'Guardar un post para el usuario' })
     async savePost(
-        @Body() dto: SavePostDto,
+        @Param("id") id: number,
         @Req() req: any) {
         const user = req['user'].sub; // usuario autenticado
         return this.mediator.execute(
-            new SavePostCommand(user, Number(dto.postId), dto.postSlug),
+            new SavePostCommand(user, id),
         );
     }
 }
