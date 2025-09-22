@@ -4,7 +4,7 @@ import { PostsService } from './application/services/posts.service';
 import { BlogContext } from './infrastructure/context';
 import { CoreModule } from '@core/core.module';
 import { StorageService } from './application/services';
-import { S3StorageConfiguration } from './infrastructure/storage/s3-storage.configuration';
+import { S3StorageConfiguration } from '../core/persistence/storage/s3-storage.configuration';
 import { PostRepository } from './infrastructure/repositories';
 
 //Handlers

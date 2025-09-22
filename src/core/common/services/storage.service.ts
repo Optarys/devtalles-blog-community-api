@@ -19,8 +19,6 @@ export class StorageService {
                 ContentType: contentType
             });
 
-            console.log(a)
-
             this.logger.log(`File uploaded successfully: ${this.bucket}/${key}`);
             return { bucke: this.bucket, key };
         } catch (error) {

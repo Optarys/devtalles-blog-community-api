@@ -53,6 +53,60 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type RoleType {
+  id: Int!
+  name: String!
+  description: String!
+}
+
+type StatusType {
+  code: String!
+  name: String!
+  description: String!
+}
+
+type SavedPostsType {
+  id: Int!
+  title: String!
+  savedAt: DateTime!
+}
+
+type PostUserType {
+  id: Int!
+  title: String!
+  summary: String!
+  publishedAt: DateTime
+}
+
+type PostCommentType {
+  id: Int!
+  content: String!
+  isModerated: Boolean!
+  createdAt: DateTime!
+}
+
+"""Representa la información de un usuario."""
+type UserType {
+  id: ID!
+  externalId: String!
+  firstName: String!
+  lastName: String!
+  username: String
+  email: String
+  isActive: Boolean!
+  status: StatusType!
+  bio: String
+  avatarUrl: String
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
+  roles: [RoleType!]!
+  posts: [PostUserType!]
+  comments: [PostCommentType!]
+  savedPosts: [SavedPostsType!]
+}
+
 type Query {
   posts(slug: String, status: String, categories: [String!], tags: [String!], from: String, to: String): [PostType!]!
+  users(externalId: String, status: String): [UserType!]!
 }

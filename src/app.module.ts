@@ -14,7 +14,6 @@ import { AdminModule } from './admin/admin.module';
     AuthModule,
     BlogModule,
     AdminModule,
-
-  ]
+  ],
 })
 export class AppModule { }

@@ -30,7 +30,7 @@ export class SignupHandler implements ICommandHandler<SignupCommand> {
 
             // Obtenemos el rol
             const defaultRole = await this.context.roles.findOne({
-                where: { name: 'reader' } 
+                where: { name: 'reader' }
             });
 
             // Crear usuario
@@ -51,10 +51,7 @@ export class SignupHandler implements ICommandHandler<SignupCommand> {
 
             const credential = this.context.users.manager.create(UserCredentialEntity, {
                 user: savedUser,
-                type: AuthCredentialType.EMAIL_PASSWORD,
-                identifier: email,
-                credentialHash: hashedPassword,
-                isVerified: false,
+                credentialHash: hashedPassword
             });
 
             await this.context.users.manager.save(credential);

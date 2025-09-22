@@ -47,7 +47,7 @@ export class UserEntity {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @Column({ name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
   @OneToMany(() => UserCredentialEntity, (cred) => cred.user)

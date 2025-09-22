@@ -1,13 +1,14 @@
 import { Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ORMConfiguration } from './persistence/config/orm.config';
-import { MediatorService } from './common/services';
+import { MediatorService, StorageService } from './common/services';
 import { AppContext } from './persistence/context/app.context';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigurationsService } from './common/services/configurations.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { S3StorageConfiguration } from './persistence/storage/s3-storage.configuration';
 
 @Module({
     imports: [
@@ -18,10 +19,11 @@ import { CacheModule } from '@nestjs/cache-manager';
             csrfPrevention: true,
             autoSchemaFile: join(process.cwd(), 'src/core/graphql/schema.gql')
         }),
+        S3StorageConfiguration.register(),
         CacheModule.register(),
         ORMConfiguration.register()
     ],
-    providers: [MediatorService, AppContext, ConfigurationsService],
-    exports: [MediatorService, AppContext, ConfigurationsService, CacheModule],
+    providers: [MediatorService, AppContext, ConfigurationsService, StorageService],
+    exports: [MediatorService, AppContext, ConfigurationsService, CacheModule, StorageService],
 })
 export class CoreModule { }
