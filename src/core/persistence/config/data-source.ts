@@ -25,11 +25,11 @@ export const AppDataSource = new DataSource({
     //   ssl: isProd
     //     ? { ca: fs.readFileSync('/etc/secrets/prod-ca-2021.crt').toString() }
     //     : false,
-    ssl: {
-        ca: isProd
-            ? fs.readFileSync('/etc/secrets/prod-ca-2021.crt').toString()
-            : process.env.DB_CERT,
-    },
+    // ssl: {
+    //     ca: isProd
+    //         ? fs.readFileSync('/etc/secrets/prod-ca-2021.crt').toString()
+    //         : process.env.DB_CERT,
+    // },
     entities: [path.resolve(__dirname, '../models/*.model.{ts,js}')],
     migrations: [path.join(__dirname, '../../../database/migrations/*.{ts,js}')],
     migrationsTableName: 'migrations'
