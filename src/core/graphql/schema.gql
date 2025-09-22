@@ -107,6 +107,6 @@ type UserType {
 }
 
 type Query {
-  posts(slug: String, status: String, categories: [String!], tags: [String!], from: String, to: String): [PostType!]!
+  posts(author: String, slug: String, status: String, categories: [String!], tags: [String!], from: String, to: String): [PostType!]!
   users(externalId: String, status: String): [UserType!]!
 }

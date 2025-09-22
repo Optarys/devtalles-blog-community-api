@@ -12,14 +12,16 @@ export class BlogResolver {
 
     // Devuelve todas las publicaciones
     @Query(() => [PostType], { name: 'posts' })
-    async posts(@Args('slug', { type: () => String, nullable: true }) slug?: string,
+    async posts(
+        @Args('author', { type: () => String, nullable: true }) author?: string,
+        @Args('slug', { type: () => String, nullable: true }) slug?: string,
         @Args('status', { type: () => String, nullable: true }) status?: string,
         @Args('categories', { type: () => [String], nullable: true }) categories?: string[],
         @Args('tags', { type: () => [String], nullable: true }) tags?: string[],
         @Args('from', { type: () => String, nullable: true }) from?: string, // fecha ISO
         @Args('to', { type: () => String, nullable: true }) to?: string,     // fecha ISO
     ): Promise<PostType[]> {
-        const posts = await this.postsService.findAllBy({ slug, status, categories, tags, from, to });
+        const posts = await this.postsService.findAllBy({author: author, slug, status, categories, tags, from, to });
         return PostMapper.toGraphQLList(posts);
     }
 

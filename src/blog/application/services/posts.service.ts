@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PostCommentEntity, PostEntity, PostCategoryEntity, PostTagEntity } from '@core/persistence/models';
 
 interface PostFilters {
+    author?: string;
     slug?: string;
     status?: string;
     categories?: string[];
@@ -21,6 +22,7 @@ export class PostsService {
             .leftJoinAndSelect('post.author', 'author')
             .leftJoinAndSelect('post.category', 'category')
 
+        if(filters.author) query = query.andWhere('author.external_id = :id', {id: filters.author});
         if (filters.slug) query = query.andWhere('post.slug = :slug', { slug: filters.slug });
         if (filters.status) query = query.andWhere('post.status = :status', { status: filters.status });
         if (filters.categories) query = query.andWhere('category.slug IN (:...categories)', { categories: filters.categories });
