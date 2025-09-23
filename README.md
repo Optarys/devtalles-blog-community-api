@@ -201,3 +201,6 @@ sequenceDiagram
     Service-->>Resolver: TagType[]
     Resolver-->>Client: TagType[]
 ```
+## 📜 Licencia
+
+Este proyecto se distribuye bajo licencia **MIT**.
