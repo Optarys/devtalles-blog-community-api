@@ -5,7 +5,7 @@ import { TagType } from "../types/tag-type";
 
 export class PostMapper {
     static toGraphQL(entity: PostEntity): PostType {
-        const endpoint = "https://fexkbggtblbjuixkpbzi.supabase.co/storage/v1/object/public/devtalles-blog-storage";
+        const endpoint = `${process.env.BASE_HOST_STORAGE}/files/covers`;
         return {
             id: entity.id,
             title: entity.title,
