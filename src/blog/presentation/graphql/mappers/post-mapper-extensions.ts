@@ -5,7 +5,7 @@ import { TagType } from "../types/tag-type";
 
 export class PostMapper {
     static toGraphQL(entity: PostEntity): PostType {
-        const endpoint = `${process.env.BASE_HOST_STORAGE}/files/covers`;
+        const endpoint = `${process.env.BASE_HOST_STORAGE}`;
         return {
             id: entity.id,
             title: entity.title,
