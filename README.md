@@ -91,9 +91,11 @@ Allí podrás importar la colección en Postman para probarlos fácilmente.
 
 #### ▶️ Uso en Postman
 
-1. Abre Postman.
-2. Importa la colección `Devtalles Blog API Rest.postman_collection.json`.
-3. Configura las variables de entorno si es necesario (por ejemplo: `{{baseUrl}}`, `{{authToken}}`).
+1. Abre Postman.  
+2. Importa la colección de alguna de estas formas:  
+   - Desde el archivo `Devtalles Blog API Rest.postman_collection.json` descargado.  
+   - Desde el **Swagger JSON** de tu host (`{{baseUrl}}/swagger-json`).  
+3. Configura las variables de entorno si es necesario (por ejemplo: `{{baseUrl}}`, `{{authToken}}`).  
 4. Empieza a probar los endpoints disponibles (posts, categorías, tags, auth, etc.).
 
 ### GraphQL API
