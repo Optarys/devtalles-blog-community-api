@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum, IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PostStatus } from '@core/persistence/models';
@@ -40,4 +40,12 @@ export class CreatePostDto {
     @ApiProperty({ description: 'Meta información SEO', example: { description: 'Post sobre NestJS', keywords: ['nestjs', 'api'] }, required: false })
     @IsOptional()
     seoMeta?: Record<string, any>;
+
+    @ApiProperty({
+        description: "Archivos de banner (imágenes)",
+        type: "string",
+        format: "binary",
+        isArray: true,
+    })
+    banners: Express.Multer.File[];
 }

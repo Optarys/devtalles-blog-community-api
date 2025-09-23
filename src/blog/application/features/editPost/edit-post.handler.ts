@@ -49,7 +49,7 @@ export class EditPostHandler implements ICommandHandler<EditPostCommand> {
 
                 // Subir nuevas imagenes
                 for (const file of banners) {
-                    const key = `${Date.now()}-${file.originalname}`; // evitar colisiones
+                    const key = `covers/${Date.now()}-${file.originalname}`; // evitar colisiones
                     const { key: uploadedKey } = await this.storage.uploadFile(key, file.buffer, file.mimetype);
                     post.bannerImages.push(uploadedKey);
                 }

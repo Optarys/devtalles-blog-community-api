@@ -9,6 +9,7 @@ import { join } from 'path';
 import { ConfigurationsService } from './common/services/configurations.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { S3StorageConfiguration } from './persistence/storage/s3-storage.configuration';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
     imports: [
@@ -19,7 +20,10 @@ import { S3StorageConfiguration } from './persistence/storage/s3-storage.configu
             csrfPrevention: true,
             autoSchemaFile: join(process.cwd(), 'src/core/graphql/schema.gql')
         }),
-        S3StorageConfiguration.register(),
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), 'storage'),
+            serveRoot: '/files',                 
+        }),
         CacheModule.register(),
         ORMConfiguration.register()
     ],

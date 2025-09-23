@@ -26,7 +26,7 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
         const bannerUrls: string[] = [];
         if (banners && banners.length > 0) {
             for (const file of banners) {
-                const key = `${Date.now()}-${file.originalname}`; // evitar colisiones
+                const key = `covers/${Date.now()}-${file.originalname}`; // evitar colisiones
                 const { key: uploadedKey } = await this.storage.uploadFile(key, file.buffer, file.mimetype);
                 bannerUrls.push(uploadedKey);
             }
